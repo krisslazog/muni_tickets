@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ticket_categories', function (Blueprint $table) {
+        Schema::create('tkt_priorities', function (Blueprint $table) {
             $table->id(); // id int [PK]
             $table->string('name');
             $table->text('description')->nullable();
@@ -25,6 +25,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('table_ticket_categories');
+        Schema::dropIfExists('tkt_priorities');
     }
 };

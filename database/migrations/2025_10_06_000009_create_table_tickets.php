@@ -17,9 +17,9 @@ return new class extends Migration
             $table->text('description')->nullable();
 
             // Claves foráneas
-            $table->foreignId('category_id')->constrained('ticket_categories')->onDelete('cascade');
-            $table->foreignId('priority_id')->constrained('ticket_priorities')->onDelete('cascade');
-            $table->foreignId('status_id')->constrained('ticket_statuses')->onDelete('cascade');
+            $table->foreignId('category_id')->constrained('tkt_categories')->onDelete('cascade');
+            $table->foreignId('priority_id')->constrained('tkt_priorities')->onDelete('cascade');
+            $table->foreignId('status_id')->constrained('tkt_statuses')->onDelete('cascade');
             $table->foreignId('area_id')->constrained('areas')->onDelete('cascade');
 
             $table->foreignId('requester_id')->constrained('persons')->onDelete('cascade');
@@ -35,6 +35,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('table_tickets');
+        Schema::dropIfExists('tickets');
     }
 };
