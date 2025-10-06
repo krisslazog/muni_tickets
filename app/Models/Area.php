@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class VenVenta extends Model
+class Area extends Model
 {
-    protected $table = 'persons';
+        protected $table = 'areas';
 
     protected $fillable = [
         'name',
@@ -14,16 +14,13 @@ class VenVenta extends Model
         'status',
     ];
 
-    // Casts para tipos específicos
     protected $casts = [
         'status' => 'boolean',
     ];
 
-    // Relaciones
-
-    // Relación uno a muchos: tickets con esta prioridad
+    // Ejemplo de relación con tickets (si los tendrás)
     public function tickets()
     {
-        return $this->hasMany(Ticket::class, 'priority_id');
+        return $this->hasMany(Ticket::class);
     }
 }

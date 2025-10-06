@@ -11,7 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('ticket_attachments', function (Blueprint $table) {
+        Schema::create('tkt_attachments', function (Blueprint $table) {
             $table->id(); // id int [PK]
 
             // Clave foránea al ticket
@@ -30,6 +30,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('table_ticket_attachments');
+        Schema::dropIfExists('tkt_attachments');
     }
 };

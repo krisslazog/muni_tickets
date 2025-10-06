@@ -11,11 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-          Schema::create('ticket_statuses', function (Blueprint $table) {
+        Schema::create('tkt_comments', function (Blueprint $table) {
             $table->id(); // id int [PK]
-            $table->string('name');
-            $table->text('description')->nullable();
-            $table->boolean('status')->default(true);
+
+            // Claves foráneas
+            $table->foreignId('ticket_id')->constrained('tickets')->onDelete('cascade');
+            $table->foreignId('person_id')->constrained('persons')->onDelete('cascade');
+
+            $table->text('content');
             $table->timestamps(); // created_at & updated_at
         });
     }
@@ -25,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('table_ticket_statuses');
+        Schema::dropIfExists('tkt_comments');
     }
 };
