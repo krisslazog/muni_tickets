@@ -1,0 +1,114 @@
+Table persons {
+  id int [PK]
+  name varchar
+  paternal_surname varchar
+  maternal_surname varchar
+  email varchar
+  birth_date date
+  phone varchar
+  status boolean
+  gender varchar
+  created_at timestamp
+  updated_at timestamp
+}
+
+Table users {
+  id int [PK]
+  username varchar
+  password varchar
+  person_id int [ref: > persons.id] // one-to-one
+}
+
+table ticket_categories {
+  id int [PK]
+  name varchar
+  description text
+  status boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+table ticket_priorities {
+  id int [PK]
+  name varchar
+  description text
+  status boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+table ticket_statuses {
+  id int [PK]
+  name varchar
+  description text
+  status boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+table areas {
+  id int [PK]
+  name varchar
+  description text
+  status boolean
+  created_at timestamp
+  updated_at timestamp
+}
+
+table tickets {
+  id int [PK]
+  title varchar
+  description text
+category_id int [ref: > ticket_categories.id]
+priority_id int [ref: > ticket_priorities.id]
+  status_id int [ref: > ticket_statuses.id]
+  area_id int [ref: > areas.id] // many-to-one
+  requester_id int [ref: > persons.id] // many-to-one
+  assignee_id int [ref: > persons.id] // many-to-one
+  created_at timestamp
+  updated_at timestamp
+  resolved_at timestamp
+}
+
+table ticket_comments {
+  id int [PK]
+  ticket_id int [ref: > tickets.id] // many-to-one
+  person_id int [ref: > persons.id] // many-to-one
+  content text
+  created_at timestamp
+  updated_at timestamp
+}
+
+table ticket_attachments {
+  id int [PK]
+  ticket_id int [ref: > tickets.id] // many-to-one
+  file_path varchar
+  file_name varchar
+  uploaded_at timestamp
+}
+
+table roles {
+  id int [PK]
+  name varchar         -- 'Technician', 'Admin', 'Client'
+  description text
+}
+
+table user_roles {
+  user_id int [ref: > users.id]
+  role_id int [ref: > roles.id]
+}
+
+table ticket_notifications {
+  id int [PK]
+  ticket_id int [ref: > tickets.id]
+  person_id int [ref: > persons.id]
+  message text
+  read boolean
+  created_at timestamp
+}
+
+
+
+
+
+
