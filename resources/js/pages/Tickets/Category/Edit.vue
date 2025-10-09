@@ -18,7 +18,7 @@ const props = defineProps<{
         type: Object,
         name: string,
         description: string,
-        default: () => ({})
+        // default: () => ({})
     },
 }>();
 

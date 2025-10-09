@@ -16,7 +16,7 @@ const props = defineProps<{
         success: string,
         error: string,
         message: string,
-        default: () => ({})
+        //default: () => ({})
     }
 
 }>();
