@@ -2,27 +2,33 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Person extends Model
 {
+    use HasFactory;
+
     protected $table = 'persons';
 
     protected $fillable = [
-        'name',
-        'paternal_surname',
-        'maternal_surname',
-        'email',
+        'first_name',
+        'last_name_paternal',
+        'last_name_maternal',
+        'document_type',
+        'document_number',
+        'gender',
         'birth_date',
         'phone',
-        'status',
-        'gender',
+        'email',
+        'address',
+        'status'
     ];
 
     // Casts para tipos específicos
     protected $casts = [
-        'status' => 'boolean',
         'birth_date' => 'date',
+        'status' => 'boolean'
     ];
 
     // Relaciones
@@ -30,7 +36,7 @@ class Person extends Model
     // Relación uno a uno con User
     public function user()
     {
-        return $this->hasOne(User::class);
+        return $this->hasMany(User::class);
     }
 
     // Relación uno a muchos: tickets que solicitó
