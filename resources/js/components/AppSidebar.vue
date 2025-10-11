@@ -14,9 +14,8 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid } from 'lucide-vue-next';
+import { BookOpen, Folder, LayoutGrid, Tickets } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
-import { Tickets } from 'lucide-vue-next';
 
 const mainNavItems: NavItem[] = [
     {
@@ -25,8 +24,13 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'Tickets',
-        href: '/tickets/category',
+        title: 'categorias',
+        href: '/admin/category',
+        icon: Tickets,
+    },
+    {
+        title: 'Prioridades',
+        href: '/admin/priority',
         icon: Tickets,
     },
 ];
@@ -52,7 +56,7 @@ const footerNavItems: NavItem[] = [
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
                         <Link :href="dashboard()">
-                        <AppLogo />
+                            <AppLogo />
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
