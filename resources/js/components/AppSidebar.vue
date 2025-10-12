@@ -14,31 +14,147 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
-import { BookOpen, Folder, LayoutGrid, Tickets } from 'lucide-vue-next';
+import {
+    BookOpen, Folder, LayoutGrid, Tickets, AudioWaveform,
+    Bot,
+    Command,
+    Frame,
+    GalleryVerticalEnd,
+    Map,
+    PieChart,
+    Settings2,
+    SquareTerminal,
+} from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
 
-const mainNavItems: NavItem[] = [
-    {
-        title: 'Dashboard',
-        href: dashboard(),
-        icon: LayoutGrid,
+const data = {
+    user: {
+        name: "shadcn",
+        email: "m@example.com",
+        avatar: "/avatars/shadcn.jpg",
     },
-    {
-        title: 'Categorías',
-        href: '/tickets/category',
-        icon: Folder,
-    },
-    {
-        title: 'Prioridades',
-        href: '/tickets/priority',
-        icon: Folder,
-    },
-    {
-        title: 'Estados',
-        href: '/tickets/status',
-        icon: Folder,
-    },
-];
+    teams: [
+        {
+            name: "Acme Inc",
+            logo: GalleryVerticalEnd,
+            plan: "Enterprise",
+        },
+        {
+            name: "Acme Corp.",
+            logo: AudioWaveform,
+            plan: "Startup",
+        },
+        {
+            name: "Evil Corp.",
+            logo: Command,
+            plan: "Free",
+        },
+    ],
+    navMain: [
+        {
+            title: "Tickets",
+            url: "#",
+            icon: SquareTerminal,
+            isActive: true,
+            items: [
+                {
+                    title: "Categorias",
+                    url: '/tickets/category',
+                },
+                {
+                    title: "Prioridades",
+                    url: '/tickets/priority',
+                },
+                {
+                    title: "Settings",
+                    url: "#",
+                },
+            ],
+        },
+        {
+            title: "Models",
+            url: "#",
+            icon: Bot,
+            items: [
+                {
+                    title: "Genesis",
+                    url: "#",
+                },
+                {
+                    title: "Explorer",
+                    url: "#",
+                },
+                {
+                    title: "Quantum",
+                    url: "#",
+                },
+            ],
+        },
+        {
+            title: "Documentation",
+            url: "#",
+            icon: BookOpen,
+            items: [
+                {
+                    title: "Introduction",
+                    url: "#",
+                },
+                {
+                    title: "Get Started",
+                    url: "#",
+                },
+                {
+                    title: "Tutorials",
+                    url: "#",
+                },
+                {
+                    title: "Changelog",
+                    url: "#",
+                },
+            ],
+        },
+        {
+            title: "Settings",
+            url: "#",
+            icon: Settings2,
+            items: [
+                {
+                    title: "General",
+                    url: "#",
+                },
+                {
+                    title: "Team",
+                    url: "#",
+                },
+                {
+                    title: "Billing",
+                    url: "#",
+                },
+                {
+                    title: "Limits",
+                    url: "#",
+                },
+            ],
+        },
+    ],
+    projects: [
+        {
+            name: "Design Engineering",
+            url: "#",
+            icon: Frame,
+        },
+        {
+            name: "Sales & Marketing",
+            url: "#",
+            icon: PieChart,
+        },
+        {
+            name: "Travel",
+            url: "#",
+            icon: Map,
+        },
+    ],
+}
 
 const footerNavItems: NavItem[] = [
     {
@@ -69,7 +185,7 @@ const footerNavItems: NavItem[] = [
         </SidebarHeader>
 
         <SidebarContent>
-            <NavMain :items="mainNavItems" />
+            <NavMain :items="data.navMain" />
         </SidebarContent>
 
         <SidebarFooter>
