@@ -1,30 +1,30 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Tickets;
 
 use App\Http\Controllers\Controller;
-use App\Models\Tkt_priority;
+use App\Models\Tkt_status;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
-class PriorityController extends Controller
+class StatusController extends Controller
 {
     
-    // Mostrar listado de prioridades
+    // Mostrar listado de estados
     public function index(Request $request)
     {
-        $priority = Tkt_priority::all();
+        $status = Tkt_status::all();
 
-        return Inertia::render('Admin/Priority/Index',
+        return Inertia::render('Tickets/Status/Index',
             [
-                'priorities' => $priority ,
+                'status' => $status ,
             ]);
     }
     
      // Mostrar formulario para crear una nueva prioridad
     public function create()
     {
-        return Inertia::render('Admin/Priority/Create');
+        return Inertia::render('Tickets/Status/Create');
     }
 
     //Crear nueva prioridad
@@ -36,24 +36,24 @@ class PriorityController extends Controller
             'description' => 'nullable|string',
             'status' => 'boolean',
         ]);
-        // Crear la categoría en la base de datos usando el modelo prioridad
-        Tkt_priority::create([
+        // Crear la estado en la base de datos usando el modelo de estado
+        Tkt_status::create([
             'name' => $request->name,
             'description' => $request->description,
             'status' => $request->status ?? true,
         ]);
-        // Redirigir al listado de categorías después de crearla
-        return redirect()->route('admin.priority.index')
-                         ->with('success', 'Prioridad creada correctamente.');
+        // Redirigir al listado de estado después de crearla
+        return redirect()->route('tickets.status.index')
+                         ->with('success', 'Estado creado correctamente.');
     }
 
     public function edit($id)
     {
-        //Buscar categoria por id
-        $priority = Tkt_priority::findOrFail($id);
-        //Retornar vista con la categoria
-        return Inertia::render('Admin/priority/Edit', [
-            'priority' => $priority,
+        //Buscar prioridad por id
+        $status = Tkt_status::findOrFail($id);
+        //Retornar vista con la estado
+        return Inertia::render('Tickets/Status/Edit', [
+            'status' => $status,
         ]);
     }
     public function update(Request $request,$id)
@@ -65,18 +65,18 @@ class PriorityController extends Controller
             'description' => 'nullable|string',
             'status' => 'boolean',
         ]);
-        //Buscar categoria por id
-        $priority = Tkt_priority::findOrFail($id);
+        //Buscar estado por id
+        $priority = Tkt_status::findOrFail($id);
 
-        //Actualizar categoria
+        //Actualizar estado
         $priority->update([
             'name' => $request->name,
             'description' => $request->description,
             'status' => $request->status ?? true,
         ]);
-        // Redirigir al listado de categorías después de actualizar
-        return redirect()->route('admin.priority.index')
-                         ->with('success', 'Prioridades actualizada correctamente.');
+        // Redirigir al listado de estado después de actualizar
+        return redirect()->route('tickets.status.index')
+                         ->with('success', 'Estados actualizados correctamente.');
     }
 
 }

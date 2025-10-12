@@ -1,6 +1,6 @@
 <?php
 
-namespace App\Http\Controllers\Admin;
+namespace App\Http\Controllers\Tickets;
 
 use App\Http\Controllers\Controller;
 use App\Models\Tkt_category;
@@ -15,7 +15,7 @@ class CategoryController extends Controller
     {
         $categories = Tkt_category::all();
 
-        return Inertia::render('Admin/Category/Index',
+        return Inertia::render('Tickets/Category/Index',
             [
                 'categories' => $categories,
             ]);
@@ -24,7 +24,7 @@ class CategoryController extends Controller
      // Mostrar formulario para crear una nueva categoria
     public function create()
     {
-        return Inertia::render('Admin/Category/Create');
+        return Inertia::render('Tickets/Category/Create');
     }
 
     //Crear nueva categoria
@@ -43,7 +43,7 @@ class CategoryController extends Controller
             'status' => $request->status ?? true,
         ]);
         // Redirigir al listado de categorías después de crearla
-        return redirect()->route('admin.category.index')
+        return redirect()->route('tickets.category.index')
                          ->with('success', 'Categoría creada correctamente.');
     }
 
@@ -52,7 +52,7 @@ class CategoryController extends Controller
         //Buscar categoria por id
         $category = Tkt_category::findOrFail($id);
         //Retornar vista con la categoria
-        return Inertia::render('Admin/Category/Edit', [
+        return Inertia::render('Tickets/Category/Edit', [
             'category' => $category,
         ]);
     }
@@ -75,7 +75,7 @@ class CategoryController extends Controller
             'status' => $request->status ?? true,
         ]);
         // Redirigir al listado de categorías después de actualizar
-        return redirect()->route('admin.category.index')
+        return redirect()->route('tickets.category.index')
                          ->with('success', 'Categoría actualizada correctamente.');
     }
 

@@ -24,32 +24,31 @@ const props = defineProps<{
     };
 }>();
 
-//Crear categoria
+//Crear prioridad
 const newPriority = () => {
-    router.visit(route('admin.priority.create'));
+    router.visit(route('tickets.priority.create'));
 };
-//editar categoria
+//editar prioridad
 
 const editPriority = (priority: any) => {
     let id = priority.id;
-    router.visit(route('admin.priority.edit', id));
+    router.visit(route('tickets.priority.edit', id));
 };
 
 const breadcrumbs: BreadcrumbItem[] = [
     {
         title: 'Prioridades',
-        href: '/admin/priority',
+        href: '/tickets/priority',
     },
 ];
 </script>
 
 <template>
+
     <Head title="Prioridades" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div
-            class="mx-auto w-full max-w-full px-4 py-6 sm:max-w-xl md:max-w-2xl lg:max-w-4xl"
-        >
+        <div class="mx-auto w-full max-w-full px-4 py-6 sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
             <div>
                 <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
                     Prioridades
@@ -60,21 +59,13 @@ const breadcrumbs: BreadcrumbItem[] = [
             </div>
             <div>
                 <!-- mensaje flash -->
-                <div
-                    v-if="props.flash.success"
+                <div v-if="props.flash.success"
                     class="mb-4 flex items-center rounded-lg border border-green-300 bg-green-50 p-4 text-sm text-green-800 dark:border-green-800 dark:bg-gray-800 dark:text-green-400"
-                    role="alert"
-                >
-                    <svg
-                        class="me-3 inline h-4 w-4 shrink-0"
-                        aria-hidden="true"
-                        xmlns="http://www.w3.org/2000/svg"
-                        fill="currentColor"
-                        viewBox="0 0 20 20"
-                    >
+                    role="alert">
+                    <svg class="me-3 inline h-4 w-4 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
+                        fill="currentColor" viewBox="0 0 20 20">
                         <path
-                            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z"
-                        />
+                            d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
                     </svg>
                     <span class="sr-only">Info</span>
                     <div>
@@ -85,10 +76,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                 </div>
                 <!--fin mensaje flash-->
                 <div class="mb-4 flex justify-end">
-                    <Button
-                        class="bg-green-600 text-white hover:bg-green-500"
-                        @click="newPriority"
-                    >
+                    <Button class="bg-green-600 text-white hover:bg-green-500" @click="newPriority">
                         <CirclePlus class="mr-0 h-4 w-4" />
                         Nueva Prioridad
                     </Button>
@@ -101,40 +89,31 @@ const breadcrumbs: BreadcrumbItem[] = [
                         <TableCell header>Nombre</TableCell>
                         <TableCell header>Descripción</TableCell>
                         <TableCell header>Estado</TableCell>
-                        <TableCell header>Acciones</TableCell>
+                        <TableCell class="align-middle text-center" header>Acciones</TableCell>
                     </TableRow>
                 </TableHead>
 
                 <TableBody>
-                    <TableRow
-                        v-for="priority in props.priorities"
-                        :key="priority.id"
-                        striped
-                        hover
-                    >
+                    <TableRow v-for="priority in props.priorities" :key="priority.id" striped hover>
                         <TableCell>{{ priority.id }}</TableCell>
                         <TableCell nowrap>{{ priority.name }}</TableCell>
                         <TableCell>{{ priority.description }}</TableCell>
                         <TableCell>
-                            <span
-                                class="rounded px-2 py-1 text-xs font-medium"
-                                :class="
-                                    priority.status
-                                        ? 'bg-green-100 text-green-800'
-                                        : 'bg-red-100 text-red-800'
-                                "
-                            >
+                            <span class="rounded px-2 py-1 text-xs font-medium" :class="priority.status
+                                ? 'bg-green-100 text-green-800'
+                                : 'bg-red-100 text-red-800'
+                                ">
                                 {{ priority.status ? 'Activo' : 'Inactivo' }}
                             </span>
                         </TableCell>
-                        <TableCell class="flex items-center justify-center">
-                            <button
-                                @click="editPriority(priority)"
-                                class="flex items-center justify-center rounded bg-yellow-500 p-1 hover:bg-yellow-400"
-                            >
+                        <TableCell class="align-middle text-center">
+                            <button @click="editPriority(priority)"
+                                class="inline-flex items-center justify-center rounded bg-yellow-500 p-1 hover:bg-yellow-400 shadow-none"
+                                style="line-height: 1;">
                                 <SquarePen class="h-4 w-4" color="white" />
                             </button>
                         </TableCell>
+
                     </TableRow>
                 </TableBody>
             </Table>

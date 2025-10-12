@@ -24,14 +24,19 @@ const mainNavItems: NavItem[] = [
         icon: LayoutGrid,
     },
     {
-        title: 'categorias',
-        href: '/admin/category',
-        icon: Tickets,
+        title: 'Categorías',
+        href: '/tickets/category',
+        icon: Folder,
     },
     {
         title: 'Prioridades',
-        href: '/admin/priority',
-        icon: Tickets,
+        href: '/tickets/priority',
+        icon: Folder,
+    },
+    {
+        title: 'Estados',
+        href: '/tickets/status',
+        icon: Folder,
     },
 ];
 
@@ -56,7 +61,7 @@ const footerNavItems: NavItem[] = [
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
                         <Link :href="dashboard()">
-                            <AppLogo />
+                        <AppLogo />
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>

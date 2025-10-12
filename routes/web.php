@@ -1,7 +1,8 @@
 <?php
 
-use App\Http\Controllers\Admin\CategoryController;
-use App\Http\Controllers\Admin\PriorityController;
+use App\Http\Controllers\Tickets\CategoryController;
+use App\Http\Controllers\Tickets\PriorityController;
+use App\Http\Controllers\Tickets\StatusController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -15,7 +16,7 @@ Route::get('dashboard', function () {
 
 
 // Grupo de rutas para el módulo de tickets
-Route::prefix('admin')->name('admin.')->group(function () {
+Route::prefix('tickets')->name('tickets.')->group(function () {
 
 // Rutas para la gestión de Categorias
 
@@ -58,6 +59,27 @@ Route::prefix('admin')->name('admin.')->group(function () {
         //Eliminar Prioridad
         Route::delete('priority/{id}', [PriorityController::class, 'destroy'])
         ->name('priority.destroy');
+
+// Rutas para la gestión de Estados
+
+        // Listar todos los estados
+        Route::get('status', [StatusController::class, 'index'])
+        ->name('status.index');
+        // Formulario para crear una nueva prioridad
+        Route::get('status/create', [StatusController::class, 'create'])
+        ->name('status.create');
+        // Guardar una nueva prioridad
+        Route::post('status', [StatusController::class, 'store'])
+        ->name('status.store');
+        // Formulario para editar una prioridad existente
+        Route::get('status/{id}/edit', [StatusController::class, 'edit'])
+        ->name('status.edit');
+        // Actualizar una prioridad existente
+        Route::put('status/{id}', [StatusController::class, 'update'])
+        ->name('status.update');
+        //Eliminar Prioridad
+        Route::delete('status/{id}', [StatusController::class, 'destroy'])
+        ->name('status.destroy');
 });
 
 require __DIR__.'/admin.php';
