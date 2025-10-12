@@ -4,9 +4,11 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\User;
+use App\Models\Person;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
+use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
@@ -44,7 +46,13 @@ class UserController extends Controller
      */
     public function create()
     {
-        //
+        $roles = Role::all();
+        $persons = Person::whereDoesntHave('user')->get();
+
+        return Inertia::render('Admin/Users/Create', [
+            'roles' => $roles,
+            'persons' => $persons
+        ]);
     }
 
     /**
