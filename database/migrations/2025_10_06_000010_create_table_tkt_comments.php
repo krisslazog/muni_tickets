@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id(); // id int [PK]
 
             // Claves foráneas
-            $table->foreignId('ticket_id')->constrained('tickets')->onDelete('cascade');
+            $table->foreignId('ticket_id')->constrained('tkt_tickets')->onDelete('cascade');
             $table->foreignId('person_id')->constrained('persons')->onDelete('cascade');
 
             $table->text('content');

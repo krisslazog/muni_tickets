@@ -72,10 +72,11 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <div>
                         <span class="font-medium">{{
                             props.flash.success
-                            }}</span>
+                        }}</span>
                     </div>
                 </div>
                 <!--fin mensaje flash-->
+                <!-- boton nuevo estado -->
                 <div class="mb-4 flex justify-end">
                     <Button class="bg-green-600 text-white hover:bg-green-500" @click="newStatus">
                         <CirclePlus class="mr-0 h-4 w-4" />
