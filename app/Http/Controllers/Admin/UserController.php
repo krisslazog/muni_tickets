@@ -55,6 +55,36 @@ class UserController extends Controller
         ]);
     }
 
+    /// Buscar persona por tipo y número de documento (AJAX)
+    public function searchByDocument(Request $request)
+    {
+        $request->validate([
+            'document_type' => 'required|string',
+            'document_number' => 'required|string|max:20|min:4',
+        ]);
+
+        $person = Person::where('document_type', $request->document_type)
+            ->where('document_number', $request->document_number)
+            ->whereDoesntHave('user')
+            ->first();
+
+        if ($person) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Persona encontrada.',
+                'data' => [
+                    'person' => $person
+                ]
+            ]);
+        } else {
+            return response()->json([
+                'success' => false,
+                'message' => 'No se encontró ninguna persona con ese documento.',
+                'data' => null
+            ]);
+        }
+    }
+
     /**
      * Store a newly created resource in storage.
      */

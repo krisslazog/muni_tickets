@@ -21,6 +21,7 @@ Route::middleware(['auth', 'verified', 'role:admin|super_admin'])->prefix('admin
     Route::prefix('users')->name('users.')->group(function () {
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('/create', [UserController::class, 'create'])->name('create'); // ← CREAR USUARIO DESDE ADMIN
+        Route::get('/search-by-document', [UserController::class, 'searchByDocument'])->name('search-by-document'); // ← CREAR USUARIO DESDE ADMIN
         Route::post('/', [UserController::class, 'store'])->name('store'); // ← GUARDAR USUARIO DESDE ADMIN
         Route::get('/{user}', [UserController::class, 'show'])->name('show');
         Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
