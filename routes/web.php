@@ -3,6 +3,7 @@
 use App\Http\Controllers\Tickets\CategoryController;
 use App\Http\Controllers\Tickets\PriorityController;
 use App\Http\Controllers\Tickets\StatusController;
+use App\Http\Controllers\Tickets\TicketsController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -80,6 +81,26 @@ Route::prefix('tickets')->name('tickets.')->group(function () {
         //Eliminar Prioridad
         Route::delete('status/{id}', [StatusController::class, 'destroy'])
         ->name('status.destroy');
+
+//Nuevo ticket
+        // Listar todos los tickets
+        Route::get('tickets', [TicketsController::class, 'index'])
+        ->name('tickets.index');
+        // Formulario para crear un nuevo ticket
+        Route::get('tickets/create', [TicketsController::class, 'create'])
+        ->name('tickets.create');
+        // Guardar un nuevo ticket
+        Route::post('tickets', [TicketsController::class, 'store'])
+        ->name('tickets.store');
+        // Formulario para editar un ticket existente
+        Route::get('tickets/{id}/edit', [TicketsController::class, 'edit'])
+        ->name('tickets.edit');
+        // Actualizar un ticket existente
+        Route::put('tickets/{id}', [TicketsController::class, 'update'])
+        ->name('tickets.update');
+        //Eliminar Ticket
+        Route::delete('tickets/{id}', [TicketsController::class, 'destroy'])
+        ->name('tickets.destroy');
 });
 
 require __DIR__.'/admin.php';

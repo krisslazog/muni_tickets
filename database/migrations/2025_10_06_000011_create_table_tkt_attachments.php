@@ -15,7 +15,7 @@ return new class extends Migration
             $table->id(); // id int [PK]
 
             // Clave foránea al ticket
-            $table->foreignId('ticket_id')->constrained('tickets')->onDelete('cascade');
+            $table->foreignId('ticket_id')->constrained('tkt_tickets')->onDelete('cascade');
 
             $table->string('file_path');
             $table->string('file_name');

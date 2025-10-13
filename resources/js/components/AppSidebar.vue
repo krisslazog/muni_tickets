@@ -66,8 +66,8 @@ const data = {
                     url: '/tickets/priority',
                 },
                 {
-                    title: "Settings",
-                    url: "#",
+                    title: "Gestion de Tickets",
+                    url: "/tickets/tickets",
                 },
             ],
         },
