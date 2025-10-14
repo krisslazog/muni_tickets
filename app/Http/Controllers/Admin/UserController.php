@@ -9,6 +9,9 @@ use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
+use Illuminate\Validation\Rules\Password;
+use App\Http\Requests\StoreUserWithPersonRequest;
 
 class UserController extends Controller
 {
@@ -83,6 +86,27 @@ class UserController extends Controller
                 'data' => null
             ]);
         }
+    }
+
+
+    public function storeWithPerson(StoreUserWithPersonRequest $request)
+    {
+        // ✅ Los datos ya vienen validados
+        $validatedData = $request->validated();
+
+        dd($validatedData);
+        $person = null;
+
+        if ($request->person_id) {
+            $person = Person::where('id', $request->person_id)
+                ->whereDoesntHave('user')
+                ->first();
+        }
+
+        return Inertia::render('Admin/Users/CreateWithPerson', [
+            'roles' => $roles,
+            'person' => $person
+        ]);
     }
 
     /**
