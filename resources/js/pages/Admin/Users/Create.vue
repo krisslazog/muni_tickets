@@ -104,13 +104,14 @@ const searchByDocument = async () => {
         console.log('Respuesta de búsqueda:', !response.data.data?.person.user);
 
         //si no trae persona ni usuario
-        if (!response.data.data?.person && !response.data.data?.person.user) {
+        if (response.data.success && !response.data.data?.person && !response.data.data?.person.user) {
             messageSearch.value = `No se encontro la persona, por favor registre los campos`;
             form.reset();
             form.document_type = searchDocumentType.value;
             form.document_number = searchDocument.value.trim();
             documentFieldsLocked.value = true;
             fieldsLocked.value = false;
+            personFound.value = false;
         }
         if (response.data.success && response.data.data?.person && !response.data.data?.person.user) {
             personFound.value = response.data.data;

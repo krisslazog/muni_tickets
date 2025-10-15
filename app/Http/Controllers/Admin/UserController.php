@@ -10,6 +10,7 @@ use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Validation\Rules\Password;
 use App\Http\Requests\StoreUserWithPersonRequest;
 
@@ -81,7 +82,7 @@ class UserController extends Controller
             ]);
         } else {
             return response()->json([
-                'success' => false,
+                'success' => true,
                 'message' => 'No se encontró ninguna persona con ese documento.',
                 'data' => null
             ]);
@@ -94,19 +95,57 @@ class UserController extends Controller
         // ✅ Los datos ya vienen validados
         $validatedData = $request->validated();
 
-        dd($validatedData);
-        $person = null;
-
-        if ($request->person_id) {
-            $person = Person::where('id', $request->person_id)
+        DB::beginTransaction();
+        // 1. Crear o actualizar persona
+        if ($validatedData['id']) {
+            // Persona existente - verificar que no tenga usuario
+            $person = Person::where('id', $validatedData['person_id'])
                 ->whereDoesntHave('user')
                 ->first();
-        }
 
-        return Inertia::render('Admin/Users/CreateWithPerson', [
-            'roles' => $roles,
-            'person' => $person
-        ]);
+            if (!$person) {
+                return back()->withErrors([
+                    'person_id' => 'Esta persona ya tiene un usuario asociado o no existe.'
+                ]);
+            }
+
+            // Actualizar datos de la persona existente
+            $person->update([
+                'first_name' => $validatedData['first_name'],
+                'last_name_paternal' => $validatedData['last_name_paternal'],
+                'last_name_maternal' => $validatedData['last_name_maternal'],
+                'email' => $validatedData['email'],
+                'phone' => $validatedData['phone'],
+                'address' => $validatedData['address'],
+                'birth_date' => $validatedData['birth_date'],
+                'gender' => $validatedData['gender'],
+            ]);
+
+        } else {
+                // Crear nueva persona
+                $person = Person::create([
+                    'document_type' => $validatedData['document_type'],
+                    'document_number' => $validatedData['document_number'],
+                    'first_name' => $validatedData['first_name'],
+                    'last_name_paternal' => $validatedData['last_name_paternal'],
+                    'last_name_maternal' => $validatedData['last_name_maternal'],
+                    'email' => $validatedData['email'],
+                    'phone' => $validatedData['phone'],
+                    'address' => $validatedData['address'],
+                    'birth_date' => $validatedData['birth_date'],
+                    'gender' => $validatedData['gender'],
+                ]);
+        }
+            // 2. Crear usuario
+            $user = User::create([
+                'name' => '',
+                'email' => $validatedData['email'] ?? $person->email,
+                'password' => Hash::make($validatedData['password']),
+                'person_id' => $person->id,
+                'email_verified_at' => now(),
+            ]);
+
+        DB::commit();
     }
 
     /**

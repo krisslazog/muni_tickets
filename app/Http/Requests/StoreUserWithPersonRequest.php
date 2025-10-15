@@ -18,6 +18,7 @@ class StoreUserWithPersonRequest extends FormRequest
     {
         return [
             // Datos de la persona
+            'id' => 'nullable|exists:persons,id',
             'document_type' => 'required|string|in:DNI,CE,Pasaporte,RUC',
             'document_number' => [
                 'required',
@@ -65,7 +66,7 @@ class StoreUserWithPersonRequest extends FormRequest
             'gender' => 'nullable|in:M,F,O',
 
             // Datos del usuario
-            'name' => 'required|string|max:255',
+            'name' => 'nullable|string|max:255',
             'password' => 'required|string|min:8|confirmed',
             'password_confirmation' => 'required',
 
