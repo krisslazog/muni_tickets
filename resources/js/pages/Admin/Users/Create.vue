@@ -103,7 +103,6 @@ const searchByDocument = async () => {
         });
         console.log('Respuesta de búsqueda:', !response.data.data?.person.user);
 
-
         //si no trae persona ni usuario
         if (!response.data.data?.person && !response.data.data?.person.user) {
             messageSearch.value = `No se encontro la persona, por favor registre los campos`;
