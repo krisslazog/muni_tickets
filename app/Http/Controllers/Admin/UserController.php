@@ -99,7 +99,7 @@ class UserController extends Controller
         // 1. Crear o actualizar persona
         if ($validatedData['id']) {
             // Persona existente - verificar que no tenga usuario
-            $person = Person::where('id', $validatedData['person_id'])
+            $person = Person::where('id', $validatedData['id'])
                 ->whereDoesntHave('user')
                 ->first();
 
@@ -136,6 +136,7 @@ class UserController extends Controller
                     'gender' => $validatedData['gender'],
                 ]);
         }
+        if($validatedData['user_id']==null) {
             // 2. Crear usuario
             $user = User::create([
                 'name' => '',
@@ -144,7 +145,16 @@ class UserController extends Controller
                 'person_id' => $person->id,
                 'email_verified_at' => now(),
             ]);
-
+        }
+        else {
+            $user = User::where('id', $validatedData['user_id'])
+                ->first();
+            $user->update([
+                'email' => $validatedData['email'] ?? $person->email,
+                'password' => Hash::make($validatedData['password']),
+                'person_id' => $person->id,
+            ]);
+        }
         DB::commit();
     }
 

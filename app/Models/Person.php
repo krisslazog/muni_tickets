@@ -27,7 +27,7 @@ class Person extends Model
 
     // Casts para tipos específicos
     protected $casts = [
-        'birth_date' => 'date',
+        'birth_date' => 'date:Y-m-d',
         'status' => 'boolean'
     ];
 

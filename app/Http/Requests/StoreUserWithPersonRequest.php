@@ -27,7 +27,7 @@ class StoreUserWithPersonRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     $exists = Person::where('document_type', $this->document_type)
                                   ->where('document_number', $value)
-                                  ->when($this->person_id, function ($query, $personId) {
+                                  ->when($this->id, function ($query, $personId) {
                                       return $query->where('id', '!=', $personId);
                                   })
                                   ->exists();
@@ -47,7 +47,7 @@ class StoreUserWithPersonRequest extends FormRequest
                 function ($attribute, $value, $fail) {
                     if ($value) {
                         $existsPerson = Person::where('email', $value)
-                                            ->when($this->person_id, function ($query, $personId) {
+                                            ->when($this->id, function ($query, $personId) {
                                                 return $query->where('id', '!=', $personId);
                                             })
                                             ->exists();
@@ -66,12 +66,11 @@ class StoreUserWithPersonRequest extends FormRequest
             'gender' => 'nullable|in:M,F,O',
 
             // Datos del usuario
+            'user_id' => 'nullable|exists:users,id',
             'name' => 'nullable|string|max:255',
             'password' => 'required|string|min:8|confirmed',
             'password_confirmation' => 'required',
 
-            // Control
-            'person_id' => 'nullable|exists:persons,id',
         ];
     }
 
@@ -107,6 +106,7 @@ class StoreUserWithPersonRequest extends FormRequest
             'gender.in' => '👤 Por favor, selecciona un género válido.',
 
             // Usuario
+
             'name.required' => '🔸 El nombre completo del usuario es obligatorio.',
             'name.max' => '⚠️ El nombre del usuario es demasiado largo.',
             'password.required' => '🔒 La contraseña es obligatoria.',
@@ -114,8 +114,6 @@ class StoreUserWithPersonRequest extends FormRequest
             'password.confirmed' => '❌ Las contraseñas no coinciden. Verifica que ambas sean iguales.',
             'password_confirmation.required' => '🔒 Debes confirmar la contraseña.',
 
-            // Control
-            'person_id.exists' => '❌ La persona seleccionada no existe en el sistema.',
         ];
     }
 
@@ -132,6 +130,7 @@ class StoreUserWithPersonRequest extends FormRequest
             'address' => 'dirección',
             'birth_date' => 'fecha de nacimiento',
             'gender' => 'género',
+            'user_id' => 'usuario',
             'name' => 'nombre completo',
             'password' => 'contraseña',
             'password_confirmation' => 'confirmación de contraseña',
