@@ -36,7 +36,7 @@ class Person extends Model
     // Relación uno a uno con User
     public function user()
     {
-        return $this->hasMany(User::class);
+        return $this->hasOne(User::class);
     }
 
     // Relación uno a muchos: tickets que solicitó

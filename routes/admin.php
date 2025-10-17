@@ -22,9 +22,7 @@ Route::middleware(['auth', 'verified', 'role:admin|super_admin'])->prefix('admin
         Route::get('/', [UserController::class, 'index'])->name('index');
         Route::get('/create', [UserController::class, 'create'])->name('create'); //
         Route::get('/search-by-document', [UserController::class, 'searchByDocument'])->name('search-by-document'); //
-        Route::post('/store-with-person', [UserController::class, 'storeWithPerson'])->name('store-with-person'); // ← CREAR USUARIO Y PERSONA
-        Route::post('/', [UserController::class, 'store'])->name('store'); // ← GUARDAR USUARIO DESDE ADMIN
-        Route::get('/{user}', [UserController::class, 'show'])->name('show');
+        Route::post('/store-with-person', [UserController::class, 'storeWithPerson'])->name('store-with-person'); //
         Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
         Route::put('/{user}', [UserController::class, 'update'])->name('update');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
@@ -36,7 +34,7 @@ Route::middleware(['auth', 'verified', 'role:admin|super_admin'])->prefix('admin
             ->name('remove-role');
 
         // Gestión de permisos directos del usuario
-        Route::post('/{user}/assign-permission', [UserController::class, 'assignPermission'])
+        Route::get('/{user}/assign-permission', [UserController::class, 'assignPermission'])
             ->name('assign-permission');
         Route::delete('/{user}/remove-permission/{permission}', [UserController::class, 'removePermission'])
             ->name('remove-permission');

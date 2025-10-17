@@ -44,21 +44,26 @@ class StoreUserWithPersonRequest extends FormRequest
                 'required',
                 'email',
                 'max:255',
-                function ($attribute, $value, $fail) {
-                    if ($value) {
-                        $existsPerson = Person::where('email', $value)
-                                            ->when($this->id, function ($query, $personId) {
-                                                return $query->where('id', '!=', $personId);
-                                            })
-                                            ->exists();
+    function ($attribute, $value, $fail) {
+        if (!$value) {
+            return;
+        }
 
-                        $existsUser = User::where('email', $value)->exists();
+        $personId = $this->input('id');        // <-- aquí tu campo persona
+        $userId   = $this->input('user_id');   // <-- aquí tu campo usuario
 
-                        if ($existsPerson || $existsUser) {
-                            $fail('Este correo electrónico ya está siendo utilizado.');
-                        }
-                    }
-                }
+        $existsPerson = Person::where('email', $value)
+            ->when($personId, fn($q) => $q->where('id', '!=', $personId))
+            ->exists();
+
+        $existsUser = User::where('email', $value)
+            ->when($userId, fn($q) => $q->where('id', '!=', $userId))
+            ->exists();
+
+        if ($existsPerson || $existsUser) {
+            $fail('El correo electrónico ya está siendo utilizado.');
+        }
+    },
             ],
             'phone' => 'nullable|string|max:20',
             'address' => 'nullable|string|max:500',
@@ -68,8 +73,8 @@ class StoreUserWithPersonRequest extends FormRequest
             // Datos del usuario
             'user_id' => 'nullable|exists:users,id',
             'name' => 'nullable|string|max:255',
-            'password' => 'required|string|min:8|confirmed',
-            'password_confirmation' => 'required',
+            'password' => 'nullable|string|min:8|confirmed',
+            'password_confirmation' => 'nullable',
 
         ];
     }

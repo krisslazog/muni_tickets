@@ -69,16 +69,14 @@ class UserController extends Controller
 
         $person = Person::where('document_type', $request->document_type)
             ->where('document_number', $request->document_number)
-            ->whereDoesntHave('user')
+            ->with('user')
             ->first();
 
         if ($person) {
             return response()->json([
                 'success' => true,
                 'message' => 'Persona encontrada.',
-                'data' => [
-                    'person' => $person
-                ]
+                'data' => $person
             ]);
         } else {
             return response()->json([
@@ -94,38 +92,20 @@ class UserController extends Controller
     {
         // ✅ Los datos ya vienen validados
         $validatedData = $request->validated();
-
         DB::beginTransaction();
-        // 1. Crear o actualizar persona
-        if ($validatedData['id']) {
-            // Persona existente - verificar que no tenga usuario
-            $person = Person::where('id', $validatedData['id'])
-                ->whereDoesntHave('user')
-                ->first();
+        try {
+            // 1. Crear o actualizar persona
+            if ($validatedData['id']) {
+                // Persona existente - verificar que no tenga usuario
+                $person = Person::where('id', $validatedData['id'])
+                    ->with('user')
+                    ->first();
+                if (!$person) {
+                    return response()->json(['error' => 'Esta persona ya tiene un usuario asociado o no existe.'], 422);
+                }
 
-            if (!$person) {
-                return back()->withErrors([
-                    'person_id' => 'Esta persona ya tiene un usuario asociado o no existe.'
-                ]);
-            }
-
-            // Actualizar datos de la persona existente
-            $person->update([
-                'first_name' => $validatedData['first_name'],
-                'last_name_paternal' => $validatedData['last_name_paternal'],
-                'last_name_maternal' => $validatedData['last_name_maternal'],
-                'email' => $validatedData['email'],
-                'phone' => $validatedData['phone'],
-                'address' => $validatedData['address'],
-                'birth_date' => $validatedData['birth_date'],
-                'gender' => $validatedData['gender'],
-            ]);
-
-        } else {
-                // Crear nueva persona
-                $person = Person::create([
-                    'document_type' => $validatedData['document_type'],
-                    'document_number' => $validatedData['document_number'],
+                // Actualizar datos de la persona existente
+                $person->update([
                     'first_name' => $validatedData['first_name'],
                     'last_name_paternal' => $validatedData['last_name_paternal'],
                     'last_name_maternal' => $validatedData['last_name_maternal'],
@@ -135,43 +115,63 @@ class UserController extends Controller
                     'birth_date' => $validatedData['birth_date'],
                     'gender' => $validatedData['gender'],
                 ]);
-        }
-        if($validatedData['user_id']==null) {
-            // 2. Crear usuario
-            $user = User::create([
-                'name' => '',
-                'email' => $validatedData['email'] ?? $person->email,
-                'password' => Hash::make($validatedData['password']),
-                'person_id' => $person->id,
-                'email_verified_at' => now(),
-            ]);
-        }
-        else {
-            $user = User::where('id', $validatedData['user_id'])
-                ->first();
-            $user->update([
-                'email' => $validatedData['email'] ?? $person->email,
-                'password' => Hash::make($validatedData['password']),
-                'person_id' => $person->id,
-            ]);
-        }
-        DB::commit();
-    }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request)
-    {
-        //
-    }
+            } else {
+                    // Crear nueva persona
+                    $person = Person::create([
+                        'document_type' => $validatedData['document_type'],
+                        'document_number' => $validatedData['document_number'],
+                        'first_name' => $validatedData['first_name'],
+                        'last_name_paternal' => $validatedData['last_name_paternal'],
+                        'last_name_maternal' => $validatedData['last_name_maternal'],
+                        'email' => $validatedData['email'],
+                        'phone' => $validatedData['phone'],
+                        'address' => $validatedData['address'],
+                        'birth_date' => $validatedData['birth_date'],
+                        'gender' => $validatedData['gender'],
+                    ]);
+            }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
+            if (empty($validatedData['user_id'])) {
+                // Crear usuario: password requerido o controla en Request
+                $userData = [
+                    'name' => '',
+                    'email' => $validatedData['email'] ?? $person->email,
+                    'person_id' => $person->id,
+                    'email_verified_at' => now(),
+                ];
+
+                if (!empty($validatedData['password'])) {
+                    $userData['password'] = Hash::make($validatedData['password']);
+                }
+
+                $user = User::create($userData);
+            } else {
+                $user = User::find($validatedData['user_id']);
+                if (!$user) {
+                    DB::rollBack();
+                    return response()->json(['error' => 'Usuario no encontrado.'], 422);
+                }
+
+                // Actualiza campos no sensibles
+                $user->email = $validatedData['email'] ?? $person->email;
+                $user->person_id = $person->id;
+
+                // Actualiza password solo si viene no vacío
+                if (!empty($validatedData['password'])) {
+                    $user->password = Hash::make($validatedData['password']);
+                }
+
+                $user->save();
+            }
+            DB::commit();
+
+            return redirect()->route('admin.users.index')->with('success', 'Usuario guardado.');
+        } catch (\Throwable $e) {
+            DB::rollBack();
+            Log::error('storeWithPerson error: '.$e->getMessage());
+            return back()->withErrors(['error' => 'Ocurrió un error al guardar.']);
+        }
     }
 
     /**
@@ -179,15 +179,39 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
-        //
+        $user = User::find($id);
+        if (!$user) {
+            abort(404);
+        }
+        $person = Person::where('id', $user->person_id)
+            ->with('user')
+            ->first();
+
+        if (!$person) {
+            abort(404);
+        }
+        return Inertia::render('Admin/Users/Edit', [
+            'person' => $person
+        ]);
     }
 
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function assignPermission(Request $request, string $id)
     {
-        //
+
+        $user = User::find($id);
+        $roles = Role::all();
+        if (!$user) {
+            return response()->json(['error' => 'Usuario no encontrado.'], 404);
+        }
+
+
+        return Inertia::render('Admin/Users/Permissions', [
+            'user' => $user,
+            'roles' => $roles,
+        ]);
     }
 
     /**

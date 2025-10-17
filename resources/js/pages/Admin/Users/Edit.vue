@@ -2,7 +2,7 @@
 import AppLayout from '@/layouts/AppLayout.vue';
 import type { BreadcrumbItem } from '@/types';
 import { Head, useForm, router } from '@inertiajs/vue3';
-import { ref } from 'vue';
+import { ref, watch } from 'vue';
 import { Button } from '@/components/ui/button';
 import { ArrowLeft, Save, Search, UserPlus } from 'lucide-vue-next';
 import axios from 'axios';
@@ -20,7 +20,7 @@ import { Label } from "@/components/ui/label"
 
 const props = defineProps<{
     roles: any[];
-    persons: any[];
+    person: any;
     errors: any;
 }>();
 
@@ -30,14 +30,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 ];
 
 // Datos de entrada para la búsqueda
-const searchDocument = ref('');           // Número de documento a buscar (DNI, CE, etc.)
-const searchDocumentType = ref('DNI');    // Tipo de documento seleccionado (DNI, CE, Pasaporte, RUC)
-
 // Estados de control
-const searchLoading = ref(false);         // Indica si está ejecutándose una búsqueda
 const personFound = ref(true);           // Almacena los datos de la persona encontrada (null si no existe)
-const searchCompleted = ref(false);      // Indica si se completó el proceso de búsqueda exitosamente
-const messageSearch = ref('');           // Mensaje informativo para mostrar al usuario
 
 // Estados de bloqueo de campos
 const fieldsLocked = ref(false);         // Bloquea TODOS los campos del formulario (cuando persona existe)
@@ -64,100 +58,15 @@ const form = useForm({
 
 });
 
-
-const newSearch = () => {
-    // Reiniciar estados y formularios
-    searchDocument.value = '';
-    searchDocumentType.value = 'DNI';
-    searchLoading.value = false;
-    personFound.value = false;
-    searchCompleted.value = false;
-    messageSearch.value = '';
-    fieldsLocked.value = false;
-    documentFieldsLocked.value = false;
-    form.user_id = null;
-    form.id = null;
-    form.reset();
-    form.clearErrors();
-};
-
-const searchByDocument = async () => {
-    if (!searchDocument.value.trim() || !searchDocumentType.value) {
-        alert('Selecciona el tipo y número de documento');
-        return;
-    }
-
-    searchLoading.value = true;
-    messageSearch.value = '';
-
-    try {
-        const response = await axios.get(route('admin.users.search-by-document'), {
-            params: {
-                document_type: searchDocumentType.value,
-                document_number: searchDocument.value.trim()
-            },
-            headers: {
-                'Accept': 'application/json',
-                'Content-Type': 'application/json'
-            }
-        });
-        console.log('Respuesta de búsqueda:', response.data);
-
-        //si no trae persona ni usuario
-        if (response.data.success && !response.data?.data && !response.data?.data?.user) {
-            messageSearch.value = `No se encontro la persona, por favor registre los campos`;
-            form.reset();
-            form.document_type = searchDocumentType.value;
-            form.document_number = searchDocument.value.trim();
-            documentFieldsLocked.value = true;
-            fieldsLocked.value = false;
-            personFound.value = false;
-        }
-        if (response.data.success && !!response.data?.data && !response.data?.data?.user) {
-            personFound.value = response.data;
-            // Llenar el formulario de persona con los datos encontrados
-            console.log('Datos de la persona encontrada:', response.data);
-            Object.assign(form, response.data?.data);
-            documentFieldsLocked.value = true;
-            fieldsLocked.value = true;
-            personFound.value = true;
-            messageSearch.value = `Persona encontrada, si desea puede actualizar los datos o continuar con el registro del usuario.`;
-        }
-        if (response.data.success && !!response.data?.data && !!response.data?.data?.user) {
-            personFound.value = response.data;
-            // Llenar el formulario de persona con los datos encontrados
-            console.log('Datos de la persona encontrada:', response.data);
-            Object.assign(form, response.data?.data);
-            form.user_id = response.data?.data?.user.id;
-
-            documentFieldsLocked.value = true;
-            fieldsLocked.value = true;
-            personFound.value = true;
-            messageSearch.value = `Persona encontrada, si desea puede actualizar los datos o continuar con el registro del usuario.`;
-        }
-
-    } catch (error: any) {
-        console.error('Error al buscar:', error);
-
-        if (error.response?.status === 404) {
-            alert('Persona no encontrada con esos datos');
-        } else if (error.response?.status === 422) {
-            // Errores de validación
-            const errors = error.response.data.errors;
-            let errorMsg = 'Errores de validación:\n';
-            Object.keys(errors).forEach(key => {
-                errorMsg += `- ${errors[key][0]}\n`;
-            });
-            alert(errorMsg);
-        } else {
-            alert('Error al buscar la persona. Verifica tu conexión.');
-        }
-
-        //personFound.value = null;
-    } finally {
-        //searchLoading.value = false;
-    }
-};
+watch(
+    () => props.person,
+    (nuevo) => {
+        Object.assign(form, nuevo);
+        form.user_id = nuevo.user.id;
+        console.log('Se reemplazó la lista de personas:', nuevo)
+    },
+    { immediate: true }
+)
 
 
 const createPerson = () => {
@@ -165,7 +74,7 @@ const createPerson = () => {
     //guardar persona y usuario
     form.post(route('admin.users.store-with-person'), {
         onSuccess: () => {
-            //router.visit(route('admin.users.index'));
+
         },
         onError: (errors) => {
             console.error('Errores:', errors);
@@ -184,69 +93,9 @@ const goBack = () => {
     <Head title="Crear Usuario" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div class="mx-auto w-full max-w-full px-4 py-6 sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
-            <!-- PASO 1: Búsqueda por documento -->
-            <div class="rounded-lg shadow p-6 mb-6" v-if="!searchLoading">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Buscar Persona</h2>
-
-                <!-- Grid responsive -->
-                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-12 gap-4 items-end mb-5">
-                    <!-- Tipo de documento -->
-                    <div class="sm:col-span-1 lg:col-span-3">
-                        <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                            Tipo
-                        </label>
-                        <select v-model="searchDocumentType" :disabled="searchLoading"
-                            class="dark:shadow-xs-light block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500">
-                            <option value="">Seleccionar...</option>
-                            <option value="DNI">DNI</option>
-                            <option value="CE">CE</option>
-                            <option value="Pasaporte">Pasaporte</option>
-                            <option value="RUC">RUC</option>
-                        </select>
-
-                    </div>
-
-                    <!-- Número de documento -->
-                    <div class="sm:col-span-1 lg:col-span-7">
-                        <label class="block text-sm font-medium text-gray-900 dark:text-white mb-2">
-                            Número
-                        </label>
-                        <input type="text" v-model="searchDocument" :disabled="searchLoading"
-                            @keyup.enter="searchByDocument"
-                            class="dark:shadow-xs-light block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
-                            placeholder="Número de documento" />
-                    </div>
-
-                    <!-- Botón -->
-                    <div class="sm:col-span-2 lg:col-span-2">
-                        <Button @click="searchByDocument"
-                            :disabled="searchLoading || !searchDocument.trim() || !searchDocumentType" size="lg"
-                            class="w-full bg-blue-600 hover:bg-blue-500 text-white">
-                            <Search class="h-4 w-4 mr-2" />
-                            <span class="hidden sm:inline">{{ searchLoading ? 'Buscando...' : 'Buscar' }}</span>
-                            <span class="sm:hidden">{{ searchLoading ? '...' : 'Buscar' }}</span>
-                        </Button>
-                    </div>
-                </div>
-            </div>
-            <!-- mensaje flash -->
-            <div v-if="!!messageSearch"
-                class="mb-4 flex items-center rounded-lg border  bg-blue-50 p-4 text-sm text-blue-800 dark:border-blue-800 dark:bg-gray-800 dark:text-blue-400"
-                role="alert">
-                <svg class="me-3 inline h-4 w-4 shrink-0" aria-hidden="true" xmlns="http://www.w3.org/2000/svg"
-                    fill="currentColor" viewBox="0 0 20 20">
-                    <path
-                        d="M10 .5a9.5 9.5 0 1 0 9.5 9.5A9.51 9.51 0 0 0 10 .5ZM9.5 4a1.5 1.5 0 1 1 0 3 1.5 1.5 0 0 1 0-3ZM12 15H8a1 1 0 0 1 0-2h1v-3H8a1 1 0 0 1 0-2h2a1 1 0 0 1 1 1v4h1a1 1 0 0 1 0 2Z" />
-                </svg>
-                <div>
-                    <span class="font-medium">{{
-                        messageSearch
-                    }}</span>
-                </div>
-            </div>
             <!--fin mensaje flash-->
             <!-- FORMULARIO PARA CREAR PERSONA -->
-            <div class="rounded-lg shadow p-6 mb-6" v-if="searchLoading">
+            <div class="rounded-lg shadow p-6 mb-6">
                 <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Crear Nueva Persona</h2>
 
                 <form @submit.prevent="createPerson" class="space-y-6">
@@ -266,7 +115,7 @@ const goBack = () => {
                             </select>
                             <span v-if="form.errors.document_type" class="text-red-500 text-sm">{{
                                 form.errors.document_type
-                            }}</span>
+                                }}</span>
                         </div>
 
                         <div>
@@ -279,7 +128,7 @@ const goBack = () => {
                                 :class="{ 'border-red-500': form.errors.document_number }" placeholder="12345678" />
                             <span v-if="form.errors.document_number" class="text-red-500 text-sm">{{
                                 form.errors.document_number
-                            }}</span>
+                                }}</span>
                         </div>
 
                         <!-- ✅ Género - USAR SELECT NATIVO PARA EVITAR PROBLEMAS -->
@@ -307,7 +156,7 @@ const goBack = () => {
                                 class="dark:shadow-xs-light block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-200 dark:disabled:bg-gray-600"
                                 :class="{ 'border-red-500': form.errors.first_name }" placeholder="Juan Carlos" />
                             <span v-if="form.errors.first_name" class="text-red-500 text-sm">{{ form.errors.first_name
-                            }}</span>
+                                }}</span>
                         </div>
 
                         <div>
@@ -383,7 +232,7 @@ const goBack = () => {
                                 class="dark:shadow-xs-light block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                                 :class="{ 'border-red-500': form.errors.password }" placeholder="Mínimo 8 caracteres" />
                             <span v-if="form.errors.password" class="text-red-500 text-sm">{{ form.errors.password
-                                }}</span>
+                            }}</span>
                         </div>
 
                         <div>
@@ -407,14 +256,6 @@ const goBack = () => {
                             <ArrowLeft class="h-4 w-4 mr-2" />
                             Cancelar
                         </Button>
-                        <!-- Botón Nueva búsqueda -->
-                        <Button type="button" @click="newSearch" variant="outline" size="lg"
-                            v-if="fieldsLocked || documentFieldsLocked" class="w-full sm:w-auto">
-                            <Search class="h-4 w-4 mr-2" />
-                            Nueva búsqueda
-                        </Button>
-
-
 
                         <!-- Botón Crear/Actualizar -->
                         <Button type="submit" :disabled="form.processing" size="lg"
@@ -438,16 +279,6 @@ const goBack = () => {
 
                     </div>
                 </form>
-            </div>
-
-            <!-- RESULTADO: PERSONA CREADA -->
-            <div v-if="searchCompleted"
-                class="bg-green-50 dark:bg-green-900/20 border border-green-200 dark:border-green-700 rounded-lg p-4 mb-6">
-                <h3 class="text-lg font-medium text-green-800 dark:text-green-300 mb-2">✓ Persona creada exitosamente
-                </h3>
-                <p class="text-sm text-green-700 dark:text-green-400">
-                    Ahora puedes completar los datos del usuario para la persona: <strong>{{ form.first_name }}</strong>
-                </p>
             </div>
         </div>
     </AppLayout>
