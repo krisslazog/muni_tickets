@@ -13,6 +13,7 @@ import { urlIsActive } from '@/lib/utils';
 import { type NavItem } from '@/types';
 import { Link, usePage } from '@inertiajs/vue3';
 import type { LucideIcon } from "lucide-vue-next";
+import { ChevronRight } from "lucide-vue-next";
 import {
     Collapsible,
     CollapsibleContent,
