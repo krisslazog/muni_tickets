@@ -3,17 +3,24 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
+use App\Models\Tkt_category;
+use App\Models\Tkt_priority;
+use App\Models\Tkt_status;
+use App\Models\Tkt_attachment;
+use App\Models\Tkt_comment;
+use App\Models\Area;
+use App\Models\Person;
 
 class Tkt_ticket extends Model
 {
     protected $table = 'tkt_tickets';
 
     protected $fillable = [
-        'title',
+'title',
         'description',
-        'category_id',
-        'priority_id',
-        'status_id',
+        'tkt_category_id', 
+        'tkt_priority_id', 
+        'tkt_status_id',   
         'area_id',
         'requester_id',
         'assignee_id',
@@ -26,23 +33,22 @@ class Tkt_ticket extends Model
     ];
 
     // Relaciones
-
     // Relación con categoría
     public function category()
     {
-        return $this->belongsTo(Category::class);
+        return $this->belongsTo(Tkt_category::class);
     }
 
     // Relación con prioridad
     public function priority()
     {
-        return $this->belongsTo(Priority::class);
+        return $this->belongsTo(Tkt_priority::class);
     }
 
     // Relación con estado
     public function status()
     {
-        return $this->belongsTo(Status::class);
+        return $this->belongsTo(Tkt_status::class);
     }
 
     // Relación con área
@@ -61,5 +67,15 @@ class Tkt_ticket extends Model
     public function assignee()
     {
         return $this->belongsTo(Person::class, 'assignee_id');
+    }
+    // Relación con adjuntos
+    public function attachments()
+    {
+        return $this->hasMany(Tkt_attachment::class);
+    }
+    // Relación con comentarios
+    public function comments()
+    {
+        return $this->hasMany(Tkt_comment::class);
     }
 }

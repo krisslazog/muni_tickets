@@ -21,6 +21,6 @@ class Area extends Model
     // Ejemplo de relación con tickets (si los tendrás)
     public function tickets()
     {
-        return $this->hasMany(Ticket::class);
+        return $this->hasMany(Tkt_ticket::class);
     }
 }

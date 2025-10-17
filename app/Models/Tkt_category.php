@@ -24,6 +24,6 @@ class Tkt_category extends Model
     // Relación uno a muchos: tickets de esta categoría
     public function tickets()
     {
-        return $this->hasMany(Ticket::class, 'category_id');
+        return $this->hasMany(Tkt_ticket::class, 'category_id');
     }
 }

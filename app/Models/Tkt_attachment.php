@@ -22,6 +22,6 @@ protected $table = 'tkt_attachments';
     // Relación con ticket
     public function ticket()
     {
-        return $this->belongsTo(Ticket::class);
+        return $this->belongsTo(Tkt_ticket::class);
     }
 }

@@ -42,24 +42,24 @@ class Person extends Model
     // Relación uno a muchos: tickets que solicitó
     public function requestedTickets()
     {
-        return $this->hasMany(Ticket::class, 'requester_id');
+        return $this->hasMany(Tkt_ticket::class, 'requester_id');
     }
 
     // Relación uno a muchos: tickets que tiene asignados
     public function assignedTickets()
     {
-        return $this->hasMany(Ticket::class, 'assignee_id');
+        return $this->hasMany(Tkt_ticket::class, 'assignee_id');
     }
 
     // Relación comentarios realizados
     public function comments()
     {
-        return $this->hasMany(TicketComment::class, 'person_id');
+        return $this->hasMany(Tkt_comment::class, 'person_id');
     }
 
     // Relación notificaciones
     public function notifications()
     {
-        return $this->hasMany(TicketNotification::class, 'person_id');
+        return $this->hasMany(Tkt_notification::class, 'person_id');
     }
 }

@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Tkt_notificarion extends Model
+class Tkt_notification extends Model
 {
     protected $table = 'tkt_notifications';
 
@@ -24,7 +24,7 @@ class Tkt_notificarion extends Model
     // Relación con ticket
     public function ticket()
     {
-        return $this->belongsTo(Ticket::class);
+        return $this->belongsTo(Tkt_ticket::class);
     }
 
     // Relación con persona

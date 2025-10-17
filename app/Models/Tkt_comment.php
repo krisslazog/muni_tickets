@@ -19,7 +19,7 @@ class Tkt_comment extends Model
     // Cada comentario pertenece a un ticket
     public function ticket()
     {
-        return $this->belongsTo(Ticket::class);
+        return $this->belongsTo(Tkt_ticket::class);
     }
 
     // Cada comentario pertenece a un usuario/persona

@@ -24,6 +24,6 @@ class Tkt_priority extends Model
     // Relación uno a muchos: tickets con esta prioridad
     public function tickets()
     {
-        return $this->hasMany(Ticket::class, 'priority_id');
+        return $this->hasMany(Tkt_ticket::class, 'priority_id');
     }
 }

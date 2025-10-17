@@ -1,98 +1,156 @@
 <script setup lang="ts">
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
 import {
-    Table,
-    TableBody,
-    TableCell,
-    TableHead,
-    TableRow,
-} from '@/components/ui/table';
+    Select,
+    SelectContent,
+    SelectItem,
+    SelectTrigger,
+    SelectValue,
+} from '@/components/ui/select';
+import { Textarea } from '@/components/ui/textarea';
 import AppLayout from '@/layouts/AppLayout.vue';
-import { type BreadcrumbItem } from '@/types';
-import { Head, router } from '@inertiajs/vue3';
-import { CirclePlus, SquarePen } from 'lucide-vue-next';
-import { defineProps } from 'vue';
+import { Head, useForm } from '@inertiajs/vue3';
 
-// Definir las props que recibimos desde el controlador
+// Definimos las props que recibimos del controlador
 const props = defineProps<{
-    tickets: any;
-    flash: {
-        success: string;
-        error: string;
-        message: string;
-        //default: () => ({})
-    };
+    categories: { id: number; name: string }[];
+    priorities: { id: number; name: string }[];
 }>();
 
-//Crear prioridad
-const newTicket = () => {
-    router.visit(route('tickets.tickets.create'));
-};
-//editar prioridad
+// Usamos el helper 'useForm' de Inertia. ¡Es súper útil!
+// Gestiona el estado, los errores y el envío por nosotros.
+const form = useForm({
+    title: '',
+    description: '',
+    tkt_category_id: null,
+    tkt_priority_id: null,
+});
 
-const editTicket = (tickets: any) => {
-    let id = tickets.id;
-    router.visit(route('tickets.tickets.edit', id));
+// Función que se ejecuta al enviar el formulario
+const submit = () => {
+    form.post(route('tickets.store'), {
+        // Hacemos un POST a la ruta 'tickets.store' que creaste en web.php
+        onSuccess: () => form.reset(),
+    });
 };
-
-//breadcrumbs
-const breadcrumbs: BreadcrumbItem[] = [
-    {
-        title: 'Gestion de tickets',
-        href: '/tickets/tickets',
-    },
-];
 </script>
 
 <template>
+    <Head title="Crear Nuevo Ticket" />
 
-    <Head title="Gestion de tickets" />
-
-    <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="mx-auto w-full max-w-full px-4 py-6 sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
-            <div>
-                <h1 class="text-2xl font-bold text-gray-800 dark:text-white">
-                    Gestion de tickets
+    <AppLayout>
+        <div class="container mx-auto max-w-2xl px-4 py-8">
+            <header class="mb-8 text-center">
+                <h1 class="text-3xl font-bold">
+                    Crear un Nuevo Ticket de Soporte
                 </h1>
-                <p class="mt-1 text-gray-600 dark:text-gray-400">
-                    Aquí puedes gestionar los tickets de soporte.
+                <p class="mt-2 text-gray-600 dark:text-gray-400">
+                    Por favor, detalla tu solicitud y te ayudaremos lo antes
+                    posible.
                 </p>
-            </div>
-            <!-- boton nuevo estado -->
-            <div class="mb-4 flex justify-end">
-                <Button class="bg-green-600 text-white hover:bg-green-500" @click="newTicket">
-                    <CirclePlus class="mr-0 h-4 w-4" />
-                    Gestion de tickets
-                </Button>
-            </div>
-            <div class="mt-6 overflow-x-auto">
-                <Table>
-                    <TableHead>
-                        <TableRow>
-                            <TableCell>Fecha</TableCell>
-                            <TableCell>Titulo</TableCell>
-                            <TableCell>Categoría</TableCell>
-                            <TableCell>Prioridad</TableCell>
-                            <TableCell>Estado</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        <TableRow v-for="ticketItem in props.tickets" :key="ticketItem.id">
-                            <TableCell>{{ ticketItem.name }}</TableCell>
-                            <TableCell>
-                                <span class="inline-block h-6 w-16 rounded"
-                                    :style="{ backgroundColor: ticketItem.color }"></span>
-                            </TableCell>
-                            <TableCell>
-                                <Button variant="outline" size="sm" @click="editTicket(ticketItem)">
-                                    <SquarePen class="mr-2 h-4 w-4" />
-                                    Editar
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
-            </div>
+            </header>
+
+            <form
+                @submit.prevent="submit"
+                class="space-y-6 rounded-lg border bg-white p-8 shadow-sm dark:bg-gray-800"
+            >
+                <div>
+                    <Label for="title">Asunto</Label>
+                    <Input
+                        id="title"
+                        v-model="form.title"
+                        type="text"
+                        placeholder="Ej: Problema al iniciar sesión"
+                        required
+                    />
+                    <div
+                        v-if="form.errors.title"
+                        class="mt-1 text-sm text-red-600"
+                    >
+                        {{ form.errors.title }}
+                    </div>
+                </div>
+
+                <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
+                    <div>
+                        <Label for="category">Categoría</Label>
+                        <Select v-model="form.tkt_category_id">
+                            <SelectTrigger>
+                                <SelectValue
+                                    placeholder="Selecciona una categoría"
+                                />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem
+                                    v-for="category in props.categories"
+                                    :key="category.id"
+                                    :value="category.id.toString()"
+                                >
+                                    {{ category.name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <div
+                            v-if="form.errors.tkt_category_id"
+                            class="mt-1 text-sm text-red-600"
+                        >
+                            {{ form.errors.tkt_category_id }}
+                        </div>
+                    </div>
+
+                    <div>
+                        <Label for="priority">Prioridad</Label>
+                        <Select v-model="form.tkt_priority_id">
+                            <SelectTrigger>
+                                <SelectValue
+                                    placeholder="Selecciona una prioridad"
+                                />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectItem
+                                    v-for="priority in props.priorities"
+                                    :key="priority.id"
+                                    :value="priority.id.toString()"
+                                >
+                                    {{ priority.name }}
+                                </SelectItem>
+                            </SelectContent>
+                        </Select>
+                        <div
+                            v-if="form.errors.tkt_priority_id"
+                            class="mt-1 text-sm text-red-600"
+                        >
+                            {{ form.errors.tkt_priority_id }}
+                        </div>
+                    </div>
+                </div>
+
+                <div>
+                    <Label for="description">Descripción del Problema</Label>
+                    <Textarea
+                        id="description"
+                        v-model="form.description"
+                        placeholder="Describe el problema con el mayor detalle posible..."
+                        rows="6"
+                        required
+                    />
+                    <div
+                        v-if="form.errors.description"
+                        class="mt-1 text-sm text-red-600"
+                    >
+                        {{ form.errors.description }}
+                    </div>
+                </div>
+
+                <div class="text-right">
+                    <Button type="submit" :disabled="form.processing">
+                        {{ form.processing ? 'Enviando...' : 'Crear Ticket' }}
+                    </Button>
+                </div>
+            </form>
         </div>
     </AppLayout>
 </template>
+<style scoped></style>
