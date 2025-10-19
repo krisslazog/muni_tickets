@@ -30,7 +30,7 @@ const form = useForm({
 
 // Función que se ejecuta al enviar el formulario
 const submit = () => {
-    form.post(route('tickets.store'), {
+    form.post(route('tickets.tickets.store'), {
         // Hacemos un POST a la ruta 'tickets.store' que creaste en web.php
         onSuccess: () => form.reset(),
     });
@@ -38,7 +38,6 @@ const submit = () => {
 </script>
 
 <template>
-
     <Head title="Crear Nuevo Ticket" />
 
     <AppLayout>
@@ -53,59 +52,100 @@ const submit = () => {
                 </p>
             </header>
 
-            <form @submit.prevent="submit" class="space-y-8 rounded-lg border bg-white p-8 shadow-sm dark:bg-gray-800">
+            <form
+                @submit.prevent="submit"
+                class="space-y-8 rounded-lg border bg-white p-8 shadow-sm dark:bg-gray-800"
+            >
                 <div>
                     <Label for="title" class="mb-2 block">Asunto</Label>
-                    <Input id="title" v-model="form.title" type="text" placeholder="Ej: Problema al iniciar sesión"
-                        required />
-                    <div v-if="form.errors.title" class="mt-1 text-sm text-red-600">
+                    <Input
+                        id="title"
+                        v-model="form.title"
+                        type="text"
+                        placeholder="Ej: Problema al iniciar sesión"
+                        required
+                    />
+                    <div
+                        v-if="form.errors.title"
+                        class="mt-1 text-sm text-red-600"
+                    >
                         {{ form.errors.title }}
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
-                        <Label for="category" class="mb-2 block">Categoría</Label>
+                        <Label for="category" class="mb-2 block"
+                            >Categoría</Label
+                        >
                         <Select v-model="form.tkt_category_id">
                             <SelectTrigger>
-                                <SelectValue placeholder="Selecciona una categoría" />
+                                <SelectValue
+                                    placeholder="Selecciona una categoría"
+                                />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem v-for="category in props.categories" :key="category.id"
-                                    :value="category.id.toString()">
+                                <SelectItem
+                                    v-for="category in props.categories"
+                                    :key="category.id"
+                                    :value="category.id.toString()"
+                                >
                                     {{ category.name }}
                                 </SelectItem>
                             </SelectContent>
                         </Select>
-                        <div v-if="form.errors.tkt_category_id" class="mt-1 text-sm text-red-600">
+                        <div
+                            v-if="form.errors.tkt_category_id"
+                            class="mt-1 text-sm text-red-600"
+                        >
                             {{ form.errors.tkt_category_id }}
                         </div>
                     </div>
 
                     <div>
-                        <Label for="priority" class="mb-2 block">Prioridad</Label>
+                        <Label for="priority" class="mb-2 block"
+                            >Prioridad</Label
+                        >
                         <Select v-model="form.tkt_priority_id">
                             <SelectTrigger>
-                                <SelectValue placeholder="Selecciona una prioridad" />
+                                <SelectValue
+                                    placeholder="Selecciona una prioridad"
+                                />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem v-for="priority in props.priorities" :key="priority.id"
-                                    :value="priority.id.toString()">
+                                <SelectItem
+                                    v-for="priority in props.priorities"
+                                    :key="priority.id"
+                                    :value="priority.id.toString()"
+                                >
                                     {{ priority.name }}
                                 </SelectItem>
                             </SelectContent>
                         </Select>
-                        <div v-if="form.errors.tkt_priority_id" class="mt-1 text-sm text-red-600">
+                        <div
+                            v-if="form.errors.tkt_priority_id"
+                            class="mt-1 text-sm text-red-600"
+                        >
                             {{ form.errors.tkt_priority_id }}
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <Label for="description" class="mb-2 block">Descripción del Problema</Label>
-                    <Textarea id="description" v-model="form.description"
-                        placeholder="Describe el problema con el mayor detalle posible..." rows="6" required />
-                    <div v-if="form.errors.description" class="mt-1 text-sm text-red-600">
+                    <Label for="description" class="mb-2 block"
+                        >Descripción del Problema</Label
+                    >
+                    <Textarea
+                        id="description"
+                        v-model="form.description"
+                        placeholder="Describe el problema con el mayor detalle posible..."
+                        rows="6"
+                        required
+                    />
+                    <div
+                        v-if="form.errors.description"
+                        class="mt-1 text-sm text-red-600"
+                    >
                         {{ form.errors.description }}
                     </div>
                 </div>

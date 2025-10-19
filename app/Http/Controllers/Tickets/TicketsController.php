@@ -19,7 +19,7 @@ class TicketsController extends Controller
     public function index()
     {
         $tickets = Tkt_ticket::with(['category', 'priority', 'status', 'requester'])
-                             ->latest()
+                             ->latest() 
                              ->paginate(15);
 
         // Esta es la versión correcta que SÍ envía los datos para los combos/filtros

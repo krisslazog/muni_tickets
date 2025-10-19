@@ -15,9 +15,11 @@ import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
 import {
-    BookOpen, Folder, LayoutGrid, Tickets, AudioWaveform,
+    AudioWaveform,
+    BookOpen,
     Bot,
     Command,
+    Folder,
     Frame,
     GalleryVerticalEnd,
     Map,
@@ -29,132 +31,132 @@ import AppLogo from './AppLogo.vue';
 
 const data = {
     user: {
-        name: "shadcn",
-        email: "m@example.com",
-        avatar: "/avatars/shadcn.jpg",
+        name: 'shadcn',
+        email: 'm@example.com',
+        avatar: '/avatars/shadcn.jpg',
     },
     teams: [
         {
-            name: "Acme Inc",
+            name: 'Acme Inc',
             logo: GalleryVerticalEnd,
-            plan: "Enterprise",
+            plan: 'Enterprise',
         },
         {
-            name: "Acme Corp.",
+            name: 'Acme Corp.',
             logo: AudioWaveform,
-            plan: "Startup",
+            plan: 'Startup',
         },
         {
-            name: "Evil Corp.",
+            name: 'Evil Corp.',
             logo: Command,
-            plan: "Free",
+            plan: 'Free',
         },
     ],
     navMain: [
         {
-            title: "Tickets",
-            url: "#",
+            title: 'Tickets',
+            url: '#',
             icon: SquareTerminal,
             isActive: true,
             items: [
                 {
-                    title: "Categorias",
+                    title: 'Categorias',
                     url: '/tickets/category',
                 },
                 {
-                    title: "Prioridades",
+                    title: 'Prioridades',
                     url: '/tickets/priority',
                 },
                 {
-                    title: "Gestion de Tickets",
-                    url: "/tickets/tickets",
+                    title: 'Nuevo Ticket',
+                    url: '/tickets/tickets',
                 },
             ],
         },
         {
-            title: "Models",
-            url: "#",
+            title: 'Models',
+            url: '#',
             icon: Bot,
             items: [
                 {
-                    title: "Genesis",
-                    url: "#",
+                    title: 'Genesis',
+                    url: '#',
                 },
                 {
-                    title: "Explorer",
-                    url: "#",
+                    title: 'Explorer',
+                    url: '#',
                 },
                 {
-                    title: "Quantum",
-                    url: "#",
+                    title: 'Quantum',
+                    url: '#',
                 },
             ],
         },
         {
-            title: "Documentation",
-            url: "#",
+            title: 'Documentation',
+            url: '#',
             icon: BookOpen,
             items: [
                 {
-                    title: "Introduction",
-                    url: "#",
+                    title: 'Introduction',
+                    url: '#',
                 },
                 {
-                    title: "Get Started",
-                    url: "#",
+                    title: 'Get Started',
+                    url: '#',
                 },
                 {
-                    title: "Tutorials",
-                    url: "#",
+                    title: 'Tutorials',
+                    url: '#',
                 },
                 {
-                    title: "Changelog",
-                    url: "#",
+                    title: 'Changelog',
+                    url: '#',
                 },
             ],
         },
         {
-            title: "Settings",
-            url: "#",
+            title: 'Settings',
+            url: '#',
             icon: Settings2,
             items: [
                 {
-                    title: "General",
-                    url: "#",
+                    title: 'General',
+                    url: '#',
                 },
                 {
-                    title: "Team",
-                    url: "#",
+                    title: 'Team',
+                    url: '#',
                 },
                 {
-                    title: "Billing",
-                    url: "#",
+                    title: 'Billing',
+                    url: '#',
                 },
                 {
-                    title: "Limits",
-                    url: "#",
+                    title: 'Limits',
+                    url: '#',
                 },
             ],
         },
     ],
     projects: [
         {
-            name: "Design Engineering",
-            url: "#",
+            name: 'Design Engineering',
+            url: '#',
             icon: Frame,
         },
         {
-            name: "Sales & Marketing",
-            url: "#",
+            name: 'Sales & Marketing',
+            url: '#',
             icon: PieChart,
         },
         {
-            name: "Travel",
-            url: "#",
+            name: 'Travel',
+            url: '#',
             icon: Map,
         },
     ],
-}
+};
 
 const footerNavItems: NavItem[] = [
     {
@@ -177,7 +179,7 @@ const footerNavItems: NavItem[] = [
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
                         <Link :href="dashboard()">
-                        <AppLogo />
+                            <AppLogo />
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
