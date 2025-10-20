@@ -2,141 +2,147 @@
 
 namespace Database\Seeders;
 
-use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
-use Spatie\Permission\Models\Role;           // ← Faltaba este import
-use Spatie\Permission\Models\Permission;     // ← Faltaba este import
-use App\Models\User;                         // ← Faltaba este import
+use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
+use App\Models\User;
+use App\Models\Person;
 
 class RolePermissionSeeder extends Seeder
 {
-    /**
-     * Run the database seeds.
-     */
     public function run(): void
     {
-// ========================================
-        // CREAR PERMISOS
-        // ========================================
+        // Permisos (name y description en español)
+        $permisos = [
+            ['name' => 'ver_tickets',           'description' => 'Ver tickets'],
+            ['name' => 'ver_mis_tickets',       'description' => 'Ver solo mis tickets'],
+            ['name' => 'ver_todos_los_tickets', 'description' => 'Ver todos los tickets'],
+            ['name' => 'crear_tickets',         'description' => 'Crear tickets'],
+            ['name' => 'editar_tickets',        'description' => 'Editar cualquier ticket'],
+            ['name' => 'editar_mis_tickets',    'description' => 'Editar solo mis tickets'],
+            ['name' => 'eliminar_tickets',      'description' => 'Eliminar tickets'],
+            ['name' => 'asignar_tickets',       'description' => 'Asignar tickets a empleados'],
+            ['name' => 'resolver_tickets',      'description' => 'Resolver tickets'],
+            ['name' => 'cerrar_tickets',        'description' => 'Cerrar tickets'],
+            ['name' => 'reabrir_tickets',       'description' => 'Reabrir tickets'],
+            ['name' => 'comentar_tickets',      'description' => 'Comentar en tickets'],
+            ['name' => 'ver_comentarios',       'description' => 'Ver comentarios de tickets'],
+            ['name' => 'gestionar_estado',      'description' => 'Gestionar estado de tickets'],
 
-        // Permisos para Tickets
-        $ticketPermissions = [
-            'view_tickets',           // Ver tickets
-            'view_own_tickets',       // Ver solo sus tickets
-            'view_all_tickets',       // Ver todos los tickets
-            'create_tickets',         // Crear tickets
-            'edit_tickets',           // Editar cualquier ticket
-            'edit_own_tickets',       // Editar solo sus tickets
-            'delete_tickets',         // Eliminar tickets
-            'assign_tickets',         // Asignar tickets a empleados
-            'resolve_tickets',        // Resolver tickets
-            'close_tickets',          // Cerrar tickets
-            'reopen_tickets',         // Reabrir tickets
-            'comment_tickets',        // Comentar en tickets
-            'view_ticket_comments',   // Ver comentarios
-            'manage_ticket_status',   // Cambiar estado de tickets
+            // Categorías
+            ['name' => 'ver_categorias',        'description' => 'Ver categorías'],
+            ['name' => 'crear_categorias',      'description' => 'Crear categorías'],
+            ['name' => 'editar_categorias',     'description' => 'Editar categorías'],
+            ['name' => 'eliminar_categorias',   'description' => 'Eliminar categorías'],
+
+            // Personas
+            ['name' => 'ver_personas',          'description' => 'Ver personas'],
+            ['name' => 'crear_personas',        'description' => 'Crear personas'],
+            ['name' => 'editar_personas',       'description' => 'Editar personas'],
+            ['name' => 'eliminar_personas',     'description' => 'Eliminar personas'],
+            ['name' => 'buscar_personas',       'description' => 'Buscar personas'],
+
+            // Usuarios
+            ['name' => 'ver_usuarios',          'description' => 'Ver usuarios'],
+            ['name' => 'crear_usuarios',        'description' => 'Crear usuarios'],
+            ['name' => 'editar_usuarios',       'description' => 'Editar usuarios'],
+            ['name' => 'eliminar_usuarios',     'description' => 'Eliminar usuarios'],
+            ['name' => 'gestionar_roles',       'description' => 'Gestionar roles de usuarios'],
+            ['name' => 'gestionar_permisos',    'description' => 'Gestionar permisos de usuarios'],
+
+            // Roles y Permisos
+            ['name' => 'ver_roles',             'description' => 'Ver roles'],
+            ['name' => 'crear_roles',           'description' => 'Crear roles'],
+            ['name' => 'editar_roles',          'description' => 'Editar roles'],
+            ['name' => 'eliminar_roles',        'description' => 'Eliminar roles'],
+            ['name' => 'ver_permisos',          'description' => 'Ver permisos'],
+            ['name' => 'crear_permisos',        'description' => 'Crear permisos'],
+            ['name' => 'editar_permisos',       'description' => 'Editar permisos'],
+            ['name' => 'eliminar_permisos',     'description' => 'Eliminar permisos'],
+            ['name' => 'asignar_permisos',      'description' => 'Asignar permisos a roles'],
+
+            // Administrativos
+            ['name' => 'acceder_panel_admin',   'description' => 'Acceder al panel de administración'],
+            ['name' => 'ver_reportes',          'description' => 'Ver reportes'],
+            ['name' => 'exportar_datos',        'description' => 'Exportar datos'],
+            ['name' => 'ver_logs',              'description' => 'Ver logs del sistema'],
+            ['name' => 'gestionar_config',      'description' => 'Gestionar configuraciones'],
+            ['name' => 'respaldar_bd',          'description' => 'Respaldar base de datos'],
         ];
 
-        // Permisos para Categorías
-        $categoryPermissions = [
-            'view_categories',        // Ver categorías
-            'create_categories',      // Crear categorías
-            'edit_categories',        // Editar categorías
-            'delete_categories',      // Eliminar categorías
-        ];
-
-        // Permisos para Personas
-        $personPermissions = [
-            'view_persons',           // Ver personas
-            'create_persons',         // Crear personas
-            'edit_persons',           // Editar personas
-            'delete_persons',         // Eliminar personas
-            'search_persons',         // Buscar personas
-        ];
-
-        // Permisos para Usuarios
-        $userPermissions = [
-            'view_users',             // Ver usuarios
-            'create_users',           // Crear usuarios
-            'edit_users',             // Editar usuarios
-            'delete_users',           // Eliminar usuarios
-            'manage_user_roles',      // Gestionar roles de usuarios
-            'manage_user_permissions', // Gestionar permisos de usuarios
-        ];
-
-        // Permisos para Roles y Permisos
-        $rolePermissions = [
-            'view_roles',             // Ver roles
-            'create_roles',           // Crear roles
-            'edit_roles',             // Editar roles
-            'delete_roles',           // Eliminar roles
-            'view_permissions',       // Ver permisos
-            'create_permissions',     // Crear permisos
-            'edit_permissions',       // Editar permisos
-            'delete_permissions',     // Eliminar permisos
-            'assign_permissions',     // Asignar permisos a roles
-        ];
-
-        // Permisos administrativos
-        $adminPermissions = [
-            'access_admin_panel',     // Acceder al panel admin
-            'view_reports',           // Ver reportes
-            'export_data',            // Exportar datos
-            'view_logs',              // Ver logs del sistema
-            'manage_settings',        // Gestionar configuraciones
-            'backup_database',        // Respaldar base de datos
-        ];
-
-        // Combinar todos los permisos
-        $allPermissions = array_merge(
-            $ticketPermissions,
-            $categoryPermissions,
-            $personPermissions,
-            $userPermissions,
-            $rolePermissions,
-            $adminPermissions
-        );
-
-        // Crear todos los permisos
-        foreach ($allPermissions as $permission) {
-            Permission::create(['name' => $permission]);
+        foreach ($permisos as $permiso) {
+            Permission::create([
+                'name' => $permiso['name'],
+                'description' => $permiso['description'],
+                'guard_name' => 'web',
+            ]);
         }
 
-        // ========================================
-        // CREAR ROLES
-        // ========================================
+        // Roles (en español)
+        $roles = [
+            ['name' => 'super_admin', 'description' => 'Super Administrador'],
+            ['name' => 'invitado',    'description' => 'Invitado'],
+        ];
 
-        // 1. ROL: SUPER ADMIN
-        $superAdmin = Role::create(['name' => 'super_admin']);
-        $superAdmin->givePermissionTo(Permission::all()); // Todos los permisos
+        foreach ($roles as $rol) {
+            Role::create([
+                'name' => $rol['name'],
+                'description' => $rol['description'],
+                'guard_name' => 'web',
+            ]);
+        }
 
-        // 6. ROL: INVITADO (para consultas públicas)
-        $guest = Role::create(['name' => 'guest']);
-        $guest->givePermissionTo([
-            'view_categories', // Solo ver categorías públicas
+        // Asignar todos los permisos al super_admin
+        $superAdmin = Role::where('name', 'super_admin')->first();
+        $superAdmin->givePermissionTo(Permission::all());
+
+        // Asignar permisos básicos al invitado
+        $guest = Role::where('name', 'invitado')->first();
+        $guest->givePermissionTo(['ver_categorias']);
+
+        // Usuarios de prueba
+        $superAdminPerson = Person::create([
+            'document_type' => 'DNI',
+            'document_number' => '12345678',
+            'first_name' => 'Super',
+            'last_name_paternal' => 'Administrador',
+            'last_name_maternal' => '',
+            'email' => 'superadmin@mgmail.com',
+            'phone' => '999999999',
+            'address' => 'Av. Principal 123',
+            'birth_date' => '1990-01-01',
+            'gender' => 'M',
         ]);
 
-        // ========================================
-        // CREAR USUARIOS DE PRUEBA
-        // ========================================
-
-        // Usuario Super Admin
         $superAdminUser = User::create([
             'name' => 'Super Administrador',
             'email' => 'superadmin@mgmail.com',
             'password' => bcrypt('123456789'),
             'email_verified_at' => now(),
+            'person_id' => $superAdminPerson->id,
         ]);
         $superAdminUser->assignRole('super_admin');
 
-        // Usuario Ciudadano
+        $citizenPerson = Person::create([
+            'document_type' => 'DNI',
+            'document_number' => '87654321',
+            'first_name' => 'Carlos',
+            'last_name_paternal' => 'López',
+            'last_name_maternal' => '',
+            'email' => 'ciudadano@email.com',
+            'phone' => '988888888',
+            'address' => 'Calle Secundaria 456',
+            'birth_date' => '1995-05-05',
+            'gender' => 'M',
+        ]);
+
         $citizenUser = User::create([
             'name' => 'Carlos López',
             'email' => 'ciudadano@email.com',
             'password' => bcrypt('123456789'),
             'email_verified_at' => now(),
+            'person_id' => $citizenPerson->id,
         ]);
-
-        $citizenUser->assignRole('guest');
+        $citizenUser->assignRole('invitado');
     }
 }

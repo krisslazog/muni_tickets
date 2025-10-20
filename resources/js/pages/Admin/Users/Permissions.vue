@@ -1,36 +1,118 @@
+<script setup lang="ts">
+import AppLayout from '@/layouts/AppLayout.vue'
+import type { BreadcrumbItem } from '@/types'
+import { useForm } from '@inertiajs/vue3'
+
+// shadcn/ui
+import { Card, CardHeader, CardContent, CardTitle } from '@/components/ui/card'
+import { Button } from '@/components/ui/button'
+import { Checkbox } from '@/components/ui/checkbox'
+import { Label } from '@/components/ui/label'
+import { Badge } from '@/components/ui/badge'
+
+
+const props = defineProps<{
+    user: any
+    roles: any[]
+    permissions: any[]
+    errors?: any
+}>()
+
+const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Usuarios', href: '/admin/users' },
+    { title: 'Asignar Roles y Permisos', href: '/admin/users/assign-permission' },
+]
+
+const form = useForm({
+    roles: (props.user?.roles ?? []).map((r: any) => r.id),
+    permissions: (props.user?.permissions ?? []).map((p: any) => p.id),
+})
+
+
+const submit = () => {
+    form.post(route('admin.users.store-assign-permission', props.user.id), {
+        onSuccess: () => {
+
+        },
+        onError: () => {
+
+        },
+    })
+}
+</script>
+
 <template>
-    <AppLayout>
-        <div class="bg-white dark:bg-gray-900 p-6 rounded-xl shadow max-w-2xl mx-auto">
-            <h2 class="text-lg font-bold mb-4 text-gray-900 dark:text-white">Asignar Roles y Permisos</h2>
 
-            <form @submit.prevent="submit" class="space-y-6">
-                <!-- Roles -->
+    <Head title="Asignar Roles y Permisos" />
+    <AppLayout :breadcrumbs="breadcrumbs">
+        <div class="mx-auto w-full max-w-5xl px-4 py-10 space-y-8">
+
+            <!-- Header -->
+            <div class="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2">
                 <div>
-                    <h3 class="font-semibold mb-2 text-gray-900 dark:text-white">Roles</h3>
-                    <div class="grid grid-cols-2 gap-2">
-                        <label v-for="role in props.roles ?? []" :key="role.id" class="flex items-center gap-2">
-                            <input type="checkbox" v-model="form.roles" :value="role.id"
-                                class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-800" />
-                            <span class="text-gray-700 dark:text-gray-200">{{ role.name }}</span>
-                        </label>
-                    </div>
+                    <h1 class="text-2xl font-semibold text-gray-900 dark:text-white">
+                        Asignar Roles y Permisos
+                    </h1>
+                    <p class="text-sm text-gray-500 dark:text-gray-400 mt-1">
+                        Gestiona los privilegios del usuario:
+                        <span class="font-semibold text-blue-600 dark:text-blue-400">
+                            {{ props.user?.name }}
+                        </span>
+                    </p>
+                </div>
+            </div>
+
+            <form @submit.prevent="submit" class="space-y-8">
+
+                <!-- Sección Roles -->
+                <div>
+                    <Card class="border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <CardHeader>
+                            <CardTitle class="flex items-center gap-2">
+                                <Badge variant="secondary" class="text-blue-600">Roles</Badge>
+                                <span class="text-gray-900 dark:text-gray-100">Asignar Roles</span>
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                <label v-for="role in props.roles" :key="role.id"
+                                    class="flex items-center gap-2 rounded-md border border-gray-200 dark:border-gray-700 p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer">
+                                    <Checkbox v-model:checked="form.roles" :value="role.id" />
+                                    <span class="text-sm text-gray-700 dark:text-gray-200">
+                                        {{ role.description ?? role.name }}
+                                    </span>
+                                </label>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
 
-                <!-- Permisos -->
+                <!-- Sección Permisos -->
                 <div>
-                    <h3 class="font-semibold mb-2 text-gray-900 dark:text-white">Permisos</h3>
-                    <div class="grid grid-cols-3 gap-2">
-                        <label v-for="perm in props.permissions ?? []" :key="perm.id" class="flex items-center gap-2">
-                            <input type="checkbox" v-model="form.permissions" :value="perm.id"
-                                class="rounded border-gray-300 dark:border-gray-600 text-blue-600 focus:ring-blue-500 dark:bg-gray-800" />
-                            <span class="text-gray-700 dark:text-gray-200">{{ perm.name }}</span>
-                        </label>
-                    </div>
+                    <Card class="border border-gray-200 dark:border-gray-700 shadow-sm">
+                        <CardHeader>
+                            <CardTitle class="flex items-center gap-2">
+                                <Badge variant="secondary" class="text-amber-600">Permisos</Badge>
+                                <span class="text-gray-900 dark:text-gray-100">Asignar Permisos</span>
+                            </CardTitle>
+                        </CardHeader>
+                        <CardContent>
+                            <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
+                                <label v-for="perm in props.permissions" :key="perm.id"
+                                    class="flex items-center gap-2 rounded-md border border-gray-200 dark:border-gray-700 p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer">
+                                    <Checkbox v-model:checked="form.permissions" :value="perm.id" />
+                                    <span class="text-sm text-gray-700 dark:text-gray-200">
+                                        {{ perm.description ?? perm.name }}
+                                    </span>
+                                </label>
+                            </div>
+                        </CardContent>
+                    </Card>
                 </div>
 
-                <div class="text-right">
-                    <Button type="submit" :disabled="form.processing"
-                        class="bg-blue-600 hover:bg-blue-700 text-white px-4 py-2 rounded disabled:bg-gray-400 disabled:cursor-not-allowed">
+                <!-- Botón Guardar -->
+                <div class="flex justify-end">
+                    <Button type="submit" size="lg" :disabled="form.processing" class="px-8">
                         Guardar cambios
                     </Button>
                 </div>
@@ -38,32 +120,3 @@
         </div>
     </AppLayout>
 </template>
-
-<script setup lang="ts">
-import AppLayout from '@/layouts/AppLayout.vue';
-import { useForm } from '@inertiajs/vue3';
-import { Button } from '@/components/ui/button';
-
-const props = defineProps<{
-    user?: any,
-    roles?: any[],
-    permissions?: any[],
-    errors?: any
-}>();
-
-const form = useForm({
-    roles: (props.user?.roles ?? []).map((r: any) => r.id),
-    permissions: (props.user?.permissions ?? []).map((p: any) => p.id),
-});
-
-const submit = () => {
-    form.post(route('admin.users.assign-permissions', props.user.id), {
-        onSuccess: () => {
-            // Mensaje de éxito opcional
-        },
-        onError: (errors) => {
-            console.error('Errores:', errors);
-        }
-    });
-};
-</script>

@@ -8,6 +8,7 @@ use App\Models\Person;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
@@ -201,8 +202,10 @@ class UserController extends Controller
     public function assignPermission(Request $request, string $id)
     {
 
-        $user = User::find($id);
+        $user = User::with(['roles', 'permissions'])->find($id);
+
         $roles = Role::all();
+        $permissions = Permission::all();
         if (!$user) {
             return response()->json(['error' => 'Usuario no encontrado.'], 404);
         }
@@ -211,14 +214,24 @@ class UserController extends Controller
         return Inertia::render('Admin/Users/Permissions', [
             'user' => $user,
             'roles' => $roles,
+            'permissions' => $permissions,
         ]);
     }
 
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+    public function updatePermission(Request $request, string $id)
     {
-        //
+        $user = User::findOrFail($id);
+
+        $request->validate([
+            'roles' => ['array'],
+            'roles.*' => ['integer', 'exists:roles,id'],
+            'permissions' => ['array'],
+            'permissions.*' => ['integer', 'exists:permissions,id'],
+        ]);
+
+        dd($request->all());
     }
 }

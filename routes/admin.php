@@ -8,7 +8,7 @@ use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Todas las rutas de administración requieren autenticación y rol admin
-Route::middleware(['auth', 'verified', 'role:admin|super_admin'])->prefix('admin')->name('admin.')->group(function () {
+Route::middleware(['auth', 'verified', 'role:admin|super_admin|invitado'])->prefix('admin')->name('admin.')->group(function () {
 
     // Dashboard administrativo
     Route::get('/', function () {
@@ -36,6 +36,8 @@ Route::middleware(['auth', 'verified', 'role:admin|super_admin'])->prefix('admin
         // Gestión de permisos directos del usuario
         Route::get('/{user}/assign-permission', [UserController::class, 'assignPermission'])
             ->name('assign-permission');
+        Route::post('/{user}/store-assign-permission', [UserController::class, 'storeAssignPermission'])
+            ->name('store-assign-permission');
         Route::delete('/{user}/remove-permission/{permission}', [UserController::class, 'removePermission'])
             ->name('remove-permission');
     });

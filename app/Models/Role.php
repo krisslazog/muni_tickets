@@ -1,21 +1,9 @@
 <?php
-
 namespace App\Models;
 
-use Illuminate\Database\Eloquent\Model;
+use Spatie\Permission\Models\Role as SpatieRole;
 
-class Role extends Model
+class Role extends SpatieRole
 {
-    protected $table = 'tkt_roles';
-
-    protected $fillable = [
-        'name',
-        'description',
-    ];
-
-    // Relación con usuarios/personas (si lo tendrás)
-    public function users()
-    {
-        return $this->hasMany(Person::class);
-    }
+    protected $fillable = ['name', 'description', 'guard_name'];
 }

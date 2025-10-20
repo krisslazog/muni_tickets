@@ -5,7 +5,7 @@ import { ref } from 'vue';
 import type { BreadcrumbItem } from '@/types';
 import { Table, TableHead, TableBody, TableRow, TableCell } from '@/components/ui/table';
 import { Button } from '@/components/ui/button';
-import { CirclePlus, SquarePen, Eye, Trash2 } from 'lucide-vue-next';
+import { CirclePlus, SquarePen, Eye, Trash2, Key } from 'lucide-vue-next';
 
 const props = defineProps<{
     users: any;
@@ -40,8 +40,8 @@ const editUser = (user: any) => {
     router.visit(route('admin.users.edit', user.id));
 };
 
-const showUser = (user: any) => {
-    router.visit(route('admin.users.show', user.id));
+const asignarPermisos = (user: any) => {
+    router.visit(route('admin.users.assign-permission', user.id));
 };
 
 const deleteUser = (user: any) => {
@@ -176,11 +176,11 @@ const clearFilters = () => {
                         </TableCell>
                         <TableCell>
                             <div class="flex space-x-2">
-                                <button @click="showUser(user)" title="Ver">
-                                    <Eye class="h-4 w-4 text-blue-500" />
-                                </button>
                                 <button @click="editUser(user)" title="Editar">
                                     <SquarePen class="h-4 w-4 text-yellow-500" />
+                                </button>
+                                <button @click="asignarPermisos(user)" title="Asignar permisos">
+                                    <Key class="h-4 w-4 text-indigo-600" />
                                 </button>
                                 <button @click="deleteUser(user)" title="Eliminar">
                                     <Trash2 class="h-4 w-4 text-red-500" />
