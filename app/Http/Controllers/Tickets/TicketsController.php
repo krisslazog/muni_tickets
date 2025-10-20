@@ -6,7 +6,10 @@ use App\Http\Controllers\Controller;
 use App\Models\Tkt_ticket;
 use App\Models\Tkt_category;
 use App\Models\Tkt_priority;
-use App\Models\Tkt_notifications; // Este no se usa aquí, pero es bueno tenerlo
+use App\Models\Tkt_notifications;
+use App\Models\Tkt_status;
+use App\Models\Tkt_attachment;
+use App\Models\Area;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 use Illuminate\Support\Facades\Auth;
@@ -27,6 +30,8 @@ class TicketsController extends Controller
             'tickets' => $tickets,
             'categories' => Tkt_category::all(),
             'priorities' => Tkt_priority::all(),
+            'statuses' => Tkt_status::all(),
+            'areas' => Area::all(),
         ]);
     }
 
@@ -38,6 +43,7 @@ class TicketsController extends Controller
         return Inertia::render('Tickets/Tickets/Create', [
             'categories' => Tkt_category::all(),
             'priorities' => Tkt_priority::all(),
+            'areas' => Area::all(['id', 'name']),
         ]);
     }
 
@@ -48,10 +54,12 @@ class TicketsController extends Controller
     {
         // 1. Validación de los datos
         $validatedData = $request->validate([
-            'title' => 'required|string|max:255',
-            'description' => 'required|string',
+            'title'           => 'required|string|max:255',
+            'description'     => 'required|string',
             'tkt_category_id' => 'required|exists:tkt_categories,id',
             'tkt_priority_id' => 'required|exists:tkt_priorities,id',
+            'area_id'         => 'nullable|exists:areas,id', // Lo dejamos opcional (nullable)
+            'attachment'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validamos el adjunto
         ]);
 
         // 2. Creación del ticket
@@ -60,11 +68,23 @@ class TicketsController extends Controller
             'description' => $validatedData['description'],
             'tkt_category_id' => $validatedData['tkt_category_id'],
             'tkt_priority_id' => $validatedData['tkt_priority_id'],
+            'area_id' => $validatedData['area_id'], // 2. ERROR CORREGIDO: Faltaba añadir 'area_id' aquí
             'tkt_status_id' => 1, // Asigna un estado inicial por defecto (ej: ID 1 = "Abierto")
             'requester_id' => Auth::id(), // Asigna el ID del usuario autenticado
         ]);
 
-        // 3. Redirección con mensaje de éxito
+        // 3. Guardar adjunto
+        if ($request->hasFile('attachment')) {
+            $file = $request->file('attachment');
+            $originalName = $file->getClientOriginalName();
+            $path = $file->store('attachments', 'public');
+
+            $ticket->attachments()->create([
+                'file_name' => $originalName,
+                'file_path' => $path,
+            ]);
+        }
+        // 4. Redirección con mensaje de éxito
         return to_route('tickets.index')->with('success', '¡Ticket creado exitosamente!');
     }
 }

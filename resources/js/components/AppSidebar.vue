@@ -14,6 +14,7 @@ import {
 import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
 import { Link } from '@inertiajs/vue3';
+import { usePage } from '@inertiajs/vue3';
 import {
     AudioWaveform,
     BookOpen,
@@ -57,19 +58,27 @@ const data = {
             title: 'Tickets',
             url: '#',
             icon: SquareTerminal,
-            isActive: true,
+            isActive: usePage().url.startsWith('/tickets'),
             items: [
                 {
                     title: 'Categorias',
-                    url: '/tickets/category',
+                    url: route('tickets.category.index'),
                 },
                 {
                     title: 'Prioridades',
-                    url: '/tickets/priority',
+                    url: route('tickets.priority.index'),
+                },
+                {
+                    title: 'Estados',
+                    url: route('tickets.status.index'),
+                },
+                {
+                    title: 'Gestion de Tickets',
+                    url: route('tickets.tickets.index'),
                 },
                 {
                     title: 'Nuevo Ticket',
-                    url: '/tickets/tickets',
+                    url: route('tickets.tickets.create'),
                 },
             ],
         },
@@ -179,7 +188,7 @@ const footerNavItems: NavItem[] = [
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
                         <Link :href="dashboard()">
-                            <AppLogo />
+                        <AppLogo />
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>

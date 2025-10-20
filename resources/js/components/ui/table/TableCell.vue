@@ -1,38 +1,21 @@
 <script setup lang="ts">
-defineProps<{
-  header?: boolean;
-  nowrap?: boolean;
-  align?: 'left' | 'center' | 'right';
-  colspan?: number;
-  rowspan?: number;
-}>();
+import type { HTMLAttributes } from "vue"
+import { cn } from "@/lib/utils"
+
+const props = defineProps<{
+  class?: HTMLAttributes["class"]
+}>()
 </script>
 
 <template>
-  <th
-    v-if="header"
-    :class="[
-      'p-3 border-b dark:border-gray-700',
-      nowrap ? 'whitespace-nowrap' : '',
-      align === 'center' ? 'text-center' : '',
-      align === 'right' ? 'text-right' : '',
-    ]"
-    :colspan="colspan"
-    :rowspan="rowspan"
-  >
-    <slot></slot>
-  </th>
   <td
-    v-else
-    :class="[
-      'p-3 border-b dark:border-gray-700',
-      nowrap ? 'whitespace-nowrap' : '',
-      align === 'center' ? 'text-center' : '',
-      align === 'right' ? 'text-right' : '',
-    ]"
-    :colspan="colspan"
-    :rowspan="rowspan"
+    :class="
+      cn(
+        'p-4 align-middle [&:has([role=checkbox])]:pr-0',
+        props.class,
+      )
+    "
   >
-    <slot></slot>
+    <slot />
   </td>
 </template>

@@ -1,19 +1,14 @@
 <script setup lang="ts">
-import { inject } from 'vue';
+import type { HTMLAttributes } from "vue"
+import { cn } from "@/lib/utils"
 
-defineProps<{
-  sticky?: boolean;
-}>();
-
-const tableId = inject('tableId', '');
+const props = defineProps<{
+  class?: HTMLAttributes["class"]
+}>()
 </script>
 
 <template>
-  <thead
-    :class="[
-      sticky ? 'sticky top-0 z-10' : '',
-    ]"
-  >
-    <slot></slot>
-  </thead>
+  <th :class="cn('h-12 px-4 text-left align-middle font-medium text-muted-foreground [&:has([role=checkbox])]:pr-0', props.class)">
+    <slot />
+  </th>
 </template>
