@@ -5,6 +5,7 @@ use App\Http\Controllers\Tickets\PriorityController;
 use App\Http\Controllers\Tickets\StatusController;
 use App\Http\Controllers\Tickets\TicketsController;
 use Illuminate\Support\Facades\Route;
+
 use Inertia\Inertia;
 
 Route::get('/', function () {
@@ -81,7 +82,7 @@ Route::prefix('tickets')->name('tickets.')->group(function () {
         //Eliminar Prioridad
         Route::delete('status/{id}', [StatusController::class, 'destroy'])
         ->name('status.destroy');
-
+        
 //Nuevo ticket
         // Listar todos los tickets
         Route::get('tickets', [TicketsController::class, 'index'])

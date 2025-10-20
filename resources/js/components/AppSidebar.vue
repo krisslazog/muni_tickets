@@ -11,21 +11,18 @@ import {
     SidebarMenuButton,
     SidebarMenuItem,
 } from '@/components/ui/sidebar';
-import { dashboard } from '@/routes';
 import { type NavItem } from '@/types';
-import { Link } from '@inertiajs/vue3';
-import { usePage } from '@inertiajs/vue3';
+import { Link, usePage } from '@inertiajs/vue3';
 import {
     AudioWaveform,
     BookOpen,
-    Bot,
     Command,
     Folder,
     Frame,
     GalleryVerticalEnd,
     Map,
     PieChart,
-    Settings2,
+    Shield,
     SquareTerminal,
 } from 'lucide-vue-next';
 import AppLogo from './AppLogo.vue';
@@ -83,67 +80,14 @@ const data = {
             ],
         },
         {
-            title: 'Models',
+            title: 'Administración',
             url: '#',
-            icon: Bot,
+            icon: Shield,
+            isActive: usePage().url.startsWith('/admin'),
             items: [
                 {
-                    title: 'Genesis',
-                    url: '#',
-                },
-                {
-                    title: 'Explorer',
-                    url: '#',
-                },
-                {
-                    title: 'Quantum',
-                    url: '#',
-                },
-            ],
-        },
-        {
-            title: 'Documentation',
-            url: '#',
-            icon: BookOpen,
-            items: [
-                {
-                    title: 'Introduction',
-                    url: '#',
-                },
-                {
-                    title: 'Get Started',
-                    url: '#',
-                },
-                {
-                    title: 'Tutorials',
-                    url: '#',
-                },
-                {
-                    title: 'Changelog',
-                    url: '#',
-                },
-            ],
-        },
-        {
-            title: 'Settings',
-            url: '#',
-            icon: Settings2,
-            items: [
-                {
-                    title: 'General',
-                    url: '#',
-                },
-                {
-                    title: 'Team',
-                    url: '#',
-                },
-                {
-                    title: 'Billing',
-                    url: '#',
-                },
-                {
-                    title: 'Limits',
-                    url: '#',
+                    title: 'Áreas',
+                    url: route('admin.areas.index'),
                 },
             ],
         },
@@ -187,8 +131,8 @@ const footerNavItems: NavItem[] = [
             <SidebarMenu>
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
-                        <Link :href="dashboard()">
-                        <AppLogo />
+                        <Link href="/">
+                            <AppLogo />
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>

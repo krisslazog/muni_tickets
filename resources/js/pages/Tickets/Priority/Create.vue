@@ -3,26 +3,17 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm } from '@inertiajs/vue3';
-import { defineProps, ref } from 'vue';
+import { defineProps } from 'vue';
 
 // Definir las props que recibimos desde el controlador
 const props = defineProps<{
     priority?: {
-        type: Object;
         name: string;
         description: string;
         status: boolean;
     };
-    errors: {
-        type: Object;
-        name: string;
-        description: string;
-        //  default: () => ({})
-    };
+    errors?: Object;
 }>();
-
-// Evitar múltiples envíos y deshabilitar el botón
-const submitdisabled = ref(false);
 
 //Volver reactivo el formulario
 const form = useForm({
@@ -30,7 +21,6 @@ const form = useForm({
     description: props.priority?.description || '',
     status: props.priority?.status ?? true,
 });
-
 
 //breadcrums
 const breadcrumbs: BreadcrumbItem[] = [
@@ -40,62 +30,106 @@ const breadcrumbs: BreadcrumbItem[] = [
 
 //Crear nueva prioridad
 function submitForm() {
-    submitdisabled.value = true;
     form.post(route('tickets.priority.store'), {
         onSuccess: () => {
             form.reset(); // Limpia el formulario
-            console.log('Prioridad creada correctamente');
-        },
-        onError: (errors) => {
-            console.log('Errores de validación:', errors);
         },
     });
 }
 </script>
 
 <template>
-
-    <Head title="Prioridades" />
+    <Head title="Crear Prioridad" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="mx-auto w-full max-w-full px-4 py-6 sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
-            <form @submit.prevent="submitForm" class="space-y-4">
+        <div
+            class="mx-auto mt-6 w-full max-w-full rounded-lg border bg-card p-6 text-card-foreground shadow-sm sm:max-w-xl md:max-w-2xl lg:max-w-4xl"
+        >
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold">Crear Nueva Prioridad</h1>
+                <p class="mt-1 text-sm text-muted-foreground">
+                    Completa el formulario para agregar una nueva prioridad de
+                    ticket.
+                </p>
+            </div>
+
+            <form @submit.prevent="submitForm" class="space-y-6">
                 <!-- Nombre -->
-                <div class="mb-5">
-                    <label for="name"
-                        class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Nombre</label>
-                    <input type="text" id="name" v-model="form.name" :class="[
-                        props.errors.name
-                            ? 'block w-full rounded-lg border border-red-500 bg-red-50 p-2.5 text-sm text-red-900 placeholder-red-700 focus:border-red-500 focus:ring-red-500 dark:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500'
-                            : 'dark:shadow-xs-light block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
-                    ]" placeholder="Nombre de prioridad" />
-                    <p class="mt-2 text-sm text-red-600 dark:text-red-500">
-                        {{ props.errors.name }}
+                <div>
+                    <label
+                        for="name"
+                        class="mb-2 block text-sm font-medium text-foreground"
+                        >Nombre</label
+                    >
+                    <input
+                        type="text"
+                        id="name"
+                        v-model="form.name"
+                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        :class="{
+                            'border-destructive focus-visible:ring-destructive':
+                                form.errors.name,
+                        }"
+                        placeholder="Ej: Alta, Media, Baja"
+                    />
+                    <p
+                        v-if="form.errors.name"
+                        class="mt-2 text-sm font-medium text-destructive"
+                    >
+                        {{ form.errors.name }}
                     </p>
                 </div>
+
                 <!-- Descripción -->
-                <div class="mb-5">
-                    <label for="description"
-                        class="mb-2 block text-sm font-medium text-gray-900 dark:text-white">Descripción</label>
-                    <input type="text" id="description" v-model="form.description" :class="[
-                        props.errors.description
-                            ? 'block w-full rounded-lg border border-red-500 bg-red-50 p-2.5 text-sm text-red-900 placeholder-red-700 focus:border-red-500 focus:ring-red-500 dark:border-red-500 dark:bg-gray-700 dark:text-red-500 dark:placeholder-red-500'
-                            : 'dark:shadow-xs-light block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500',
-                    ]" placeholder="Descripción de prioridad" />
-                    <p class="mt-2 text-sm text-red-600 dark:text-red-500">
-                        {{ props.errors.description }}
+                <div>
+                    <label
+                        for="description"
+                        class="mb-2 block text-sm font-medium text-foreground"
+                        >Descripción</label
+                    >
+                    <input
+                        type="text"
+                        id="description"
+                        v-model="form.description"
+                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        :class="{
+                            'border-destructive focus-visible:ring-destructive':
+                                form.errors.description,
+                        }"
+                        placeholder="Describe la prioridad"
+                    />
+                    <p
+                        v-if="form.errors.description"
+                        class="mt-2 text-sm font-medium text-destructive"
+                    >
+                        {{ form.errors.description }}
                     </p>
                 </div>
-                <!-- Checkbox -->
-                <div class="mb-5 flex items-center">
-                    <input id="estado" type="checkbox" v-model="form.status" class="h-4 w-4 rounded border-gray-300" />
-                    <label for="estado" class="ml-2 text-sm font-medium text-gray-900 dark:text-gray-300">Activo</label>
+
+                <!-- Checkbox Estado -->
+                <div class="flex items-center space-x-2">
+                    <input
+                        type="checkbox"
+                        id="status"
+                        v-model="form.status"
+                        class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
+                    />
+                    <label
+                        for="status"
+                        class="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+                    >
+                        Activo
+                    </label>
                 </div>
 
                 <!-- Botón Guardar al final -->
-                <div class="flex justify-end">
-                    <Button type="submit" :disabled="submitdisabled"
-                        class="bg-green-600 text-white hover:bg-green-500">Guardar</Button>
+                <div class="flex justify-end border-t border-border pt-6">
+                    <Button
+                        type="submit"
+                        :disabled="form.processing"
+                        class="bg-green-600 text-white hover:bg-green-500"
+                        >Guardar</Button
+                    >
                 </div>
             </form>
         </div>

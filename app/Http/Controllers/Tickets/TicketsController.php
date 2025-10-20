@@ -63,7 +63,7 @@ class TicketsController extends Controller
         ]);
 
         // 2. Creación del ticket
-        Tkt_ticket::create([
+        $ticket = Tkt_ticket::create([
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
             'category_id' => $validatedData['category_id'],
@@ -86,6 +86,6 @@ class TicketsController extends Controller
             ]);
         }
         // 4. Redirección con mensaje de éxito
-        return to_route('tickets.index')->with('success', '¡Ticket creado exitosamente!');
+        return to_route('tickets.tickets.index')->with('success', '¡Ticket creado exitosamente!');
     }
 }

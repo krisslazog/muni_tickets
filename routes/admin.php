@@ -3,12 +3,28 @@
 // use App\Http\Controllers\Admin\RoleController;
 // use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\UserController;
+use App\Http\Controllers\Admin\AreaController;
 use App\Http\Controllers\Admin\PersonController as AdminPersonController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
 // Todas las rutas de administración requieren autenticación y rol admin
-Route::middleware(['auth', 'verified', 'role:admin|super_admin|invitado'])->prefix('admin')->name('admin.')->group(function () {
+//Route::middleware(['auth', 'verified', 'role:admin|super_admin|invitado'])->prefix('admin')->name('admin.')->group(function () {
+
+    // ========================================
+    // MOMENTANEOOOO
+    // ========================================
+
+Route::middleware([
+    'auth',                            // <-- Se mantiene activo (debes estar logueado)
+    'verified',                        // <-- Se mantiene activo (email verificado)
+    // 'role:admin|super_admin|invitado'  // <-- COMENTADO TEMPORALMENTE
+])
+->prefix('admin') // <-- Sigue funcionando
+->name('admin.')   // <-- Sigue funcionando
+->group(function () { // <-- Sigue funcionando
+    
+    // ========================================
 
     // Dashboard administrativo
     Route::get('/', function () {
@@ -90,6 +106,18 @@ Route::middleware(['auth', 'verified', 'role:admin|super_admin|invitado'])->pref
     //     Route::post('/{person}/create-user', [AdminPersonController::class, 'createUser'])
     //         ->name('create-user');
     // });
+
+    // ========================================
+    // GESTIÓN DE AREAS
+    // ========================================
+    Route::prefix('areas')->name('areas.')->group(function () {
+        Route::get('/', [AreaController::class, 'index'])->name('index');
+        Route::get('/create', [AreaController::class, 'create'])->name('create');
+        Route::post('/', [AreaController::class, 'store'])->name('store');
+        Route::get('/{area}/edit', [AreaController::class, 'edit'])->name('edit');
+        Route::put('/{area}', [AreaController::class, 'update'])->name('update');
+        Route::delete('/{area}', [AreaController::class, 'destroy'])->name('destroy');
+    });
 
     // ========================================
     // ESTADÍSTICAS Y REPORTES
