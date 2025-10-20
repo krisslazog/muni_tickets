@@ -18,9 +18,9 @@ class Tkt_ticket extends Model
     protected $fillable = [
         'title',
         'description',
-        'tkt_category_id', 
-        'tkt_priority_id', 
-        'tkt_status_id',   
+        'category_id', 
+        'priority_id', 
+        'status_id',   
         'area_id',
         'requester_id',
         'assignee_id',

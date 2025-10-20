@@ -7,7 +7,6 @@ import {
     TableBody,
     TableCell,
     TableHead,
-    TableHeader,
     TableRow,
 } from '@/components/ui/table';
 import { CirclePlus, SquarePen } from 'lucide-vue-next';
@@ -107,16 +106,16 @@ const isSuccessFlash = computed(() => !!props.flash?.success);
 
             <div class="overflow-x-auto rounded-lg border bg-white dark:bg-gray-800">
                 <Table>
-                    <TableHeader>
+                    <TableHead>
                         <TableRow>
-                            <TableHead>Título</TableHead>
-                            <TableHead>Solicitante</TableHead>
-                            <TableHead>Estado</TableHead>
-                            <TableHead>Prioridad</TableHead>
-                            <TableHead>Fecha Creación</TableHead>
-                            <TableHead class="text-right">Acciones</TableHead>
+                            <TableCell>Título</TableCell>
+                            <TableCell>Solicitante</TableCell>
+                            <TableCell>Estado</TableCell>
+                            <TableCell>Prioridad</TableCell>
+                            <TableCell>Fecha Creación</TableCell>
+                            <TableCell class="text-right">Acciones</TableCell>
                         </TableRow>
-                    </TableHeader>
+                    </TableHead>
                     <TableBody>
                         <template v-if="props.tickets.data.length > 0">
                             <TableRow v-for="ticket in props.tickets.data" :key="ticket.id">
@@ -150,7 +149,7 @@ const isSuccessFlash = computed(() => !!props.flash?.success);
                         </template>
                         <template v-else>
                             <TableRow>
-                                <TableCell colspan="6" class="py-10 text-center text-gray-500">
+                                <TableCell :colspan="6" class="py-10 text-center text-gray-500">
                                     No hay tickets para mostrar.
                                 </TableCell>
                             </TableRow>

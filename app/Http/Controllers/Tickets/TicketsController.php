@@ -56,8 +56,8 @@ class TicketsController extends Controller
         $validatedData = $request->validate([
             'title'           => 'required|string|max:255',
             'description'     => 'required|string',
-            'tkt_category_id' => 'required|exists:tkt_categories,id',
-            'tkt_priority_id' => 'required|exists:tkt_priorities,id',
+            'category_id' => 'required|exists:tkt_categories,id',
+            'priority_id' => 'required|exists:tkt_priorities,id',
             'area_id'         => 'nullable|exists:areas,id', // Lo dejamos opcional (nullable)
             'attachment'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validamos el adjunto
         ]);
@@ -66,11 +66,12 @@ class TicketsController extends Controller
         Tkt_ticket::create([
             'title' => $validatedData['title'],
             'description' => $validatedData['description'],
-            'tkt_category_id' => $validatedData['tkt_category_id'],
-            'tkt_priority_id' => $validatedData['tkt_priority_id'],
-            'area_id' => $validatedData['area_id'], // 2. ERROR CORREGIDO: Faltaba añadir 'area_id' aquí
-            'tkt_status_id' => 1, // Asigna un estado inicial por defecto (ej: ID 1 = "Abierto")
+            'category_id' => $validatedData['category_id'],
+            'priority_id' => $validatedData['priority_id'],
+            'area_id' => 1,
+            'status_id' => 1, // Asigna un estado inicial por defecto (ej: ID 1 = "Abierto")
             'requester_id' => Auth::id(), // Asigna el ID del usuario autenticado
+            'assignee_id' => 1, // Sin asignar inicialmente
         ]);
 
         // 3. Guardar adjunto

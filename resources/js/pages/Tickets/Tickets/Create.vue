@@ -26,16 +26,16 @@ const props = defineProps<{
 interface TicketForm {
     title: string;
     description: string;
-    tkt_category_id: number | null;
-    tkt_priority_id: number | null;
+    category_id: number | null;
+    priority_id: number | null;
     area_id: number | null;
     attachment: File | null; // <-- Le decimos que 'attachment' puede ser un Archivo o nulo
 }
 const form = useForm<TicketForm>({
     title: '',
     description: '',
-    tkt_category_id: null,
-    tkt_priority_id: null,
+    category_id: null,
+    priority_id: null,
     area_id: null,
     attachment: null,
 });
@@ -94,7 +94,7 @@ const submit = () => {
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
                         <Label for="category" class="mb-2 block">Categoría</Label>
-                        <Select v-model="form.tkt_category_id">
+                        <Select v-model="form.category_id">
                             <SelectTrigger>
                                 <SelectValue placeholder="Selecciona una categoría" />
                             </SelectTrigger>
@@ -105,14 +105,14 @@ const submit = () => {
                                 </SelectItem>
                             </SelectContent>
                         </Select>
-                        <div v-if="form.errors.tkt_category_id" class="mt-1 text-sm text-red-600">
-                            {{ form.errors.tkt_category_id }}
+                        <div v-if="form.errors.category_id" class="mt-1 text-sm text-red-600">
+                            {{ form.errors.category_id }}
                         </div>
                     </div>
 
                     <div>
                         <Label for="priority" class="mb-2 block">Prioridad</Label>
-                        <Select v-model="form.tkt_priority_id">
+                        <Select v-model="form.priority_id">
                             <SelectTrigger>
                                 <SelectValue placeholder="Selecciona una prioridad" />
                             </SelectTrigger>
@@ -123,8 +123,8 @@ const submit = () => {
                                 </SelectItem>
                             </SelectContent>
                         </Select>
-                        <div v-if="form.errors.tkt_priority_id" class="mt-1 text-sm text-red-600">
-                            {{ form.errors.tkt_priority_id }}
+                        <div v-if="form.errors.priority_id" class="mt-1 text-sm text-red-600">
+                            {{ form.errors.priority_id }}
                         </div>
                     </div>
                 </div>
