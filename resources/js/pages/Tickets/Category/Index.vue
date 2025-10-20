@@ -71,7 +71,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                     <div>
                         <span class="font-medium">{{
                             props.flash.success
-                        }}</span>
+                            }}</span>
                     </div>
                 </div>
                 <!--fin mensaje flash-->
@@ -82,7 +82,7 @@ const breadcrumbs: BreadcrumbItem[] = [
                     </Button>
                 </div>
             </div>
-            <Table hover bordered responsive>
+            <Table class="table-fixed" hover bordered responsive>
                 <TableHead sticky>
                     <TableRow>
                         <TableCell header>ID</TableCell>

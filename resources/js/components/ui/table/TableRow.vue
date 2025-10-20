@@ -1,14 +1,17 @@
 <script setup lang="ts">
-import type { HTMLAttributes } from "vue"
-import { cn } from "@/lib/utils"
-
-const props = defineProps<{
-  class?: HTMLAttributes["class"]
-}>()
+defineProps<{
+    striped?: boolean;
+    hover?: boolean;
+    selected?: boolean;
+}>();
 </script>
 
 <template>
-  <tr :class="cn('border-b transition-colors hover:bg-muted/50 data-[state=selected]:bg-muted', props.class)">
-    <slot />
-  </tr>
+    <tr :class="[
+        striped ? 'even:bg-gray-50 even:dark:bg-gray-800' : '',
+        hover ? 'hover:bg-gray-100 dark:hover:bg-gray-700' : '',
+        selected ? 'bg-blue-50 dark:bg-blue-900' : ''
+    ]">
+        <slot></slot>
+    </tr>
 </template>
