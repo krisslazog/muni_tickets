@@ -12,6 +12,18 @@ import type { BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import { CirclePlus, Key, SquarePen, Trash2 } from 'lucide-vue-next';
 import { ref } from 'vue';
+import { Badge } from '@/components/ui/badge'
+import { Input } from "@/components/ui/input"
+import {
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+
 
 const props = defineProps<{
     users: any;
@@ -75,7 +87,9 @@ const debounceSearch = () => {
 };
 
 const search = () => {
-    router.get(route('admin.users.index'), form.value, {
+    const params = { ...form.value };
+    if (params.role === '_all') params.role = '';
+    router.get(route('admin.users.index'), params, {
         preserveState: true,
         preserveScroll: true,
     });
@@ -88,6 +102,7 @@ const clearFilters = () => {
 </script>
 
 <template>
+
     <Head title="Usuarios" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
@@ -103,62 +118,48 @@ const clearFilters = () => {
 
             <div>
                 <!-- Mensaje flash -->
-                <div
-                    v-if="props.flash?.success"
-                    class="mb-4 flex items-center rounded-lg border border-green-300 bg-green-50 p-4 text-sm text-green-800 dark:border-green-800 dark:bg-gray-800 dark:text-green-400"
-                >
+                <div v-if="props.flash?.success"
+                    class="mb-4 flex items-center rounded-lg border border-green-300 bg-green-50 p-4 text-sm text-green-800 dark:border-green-800 dark:bg-gray-800 dark:text-green-400">
                     <span class="font-medium">{{ props.flash.success }}</span>
                 </div>
 
                 <!-- Filtros -->
                 <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-4">
                     <div>
-                        <input
-                            v-model="form.search"
-                            type="text"
-                            placeholder="Buscar por nombre, email..."
-                            class="w-full rounded-md border border-gray-300 px-3 py-2"
-                            @input="debounceSearch"
-                        />
+                        <Input v-model="form.search" type="text" placeholder="Buscar por nombre, email..."
+                            class="w-full" @input="debounceSearch" />
                     </div>
                     <div>
-                        <input
-                            v-model="form.dni"
-                            type="text"
-                            placeholder="Buscar por DNI..."
-                            class="w-full rounded-md border border-gray-300 px-3 py-2"
-                            @input="debounceSearch"
-                        />
+                        <Input v-model="form.dni" type="text" placeholder="Buscar por DNI..." class="w-full"
+                            @input="debounceSearch" />
                     </div>
                     <div>
-                        <select
-                            v-model="form.role"
-                            class="w-full rounded-md border border-gray-300 px-3 py-2"
-                            @change="search"
-                        >
-                            <option value="">Todos los roles</option>
-                            <option
-                                v-for="role in roles"
-                                :key="role.id"
-                                :value="role.name"
-                            >
-                                {{ formatRoleName(role.name) }}
-                            </option>
-                        </select>
+                        <Select v-model="form.role" class="w-full rounded-md border border-gray-300 px-3 py-2"
+                            @update:model-value="debounceSearch">
+                            <SelectTrigger>
+                                <SelectValue placeholder="Todos los roles" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Roles</SelectLabel>
+                                    <SelectItem value="_all">
+                                        Todos
+                                    </SelectItem>
+                                    <SelectItem v-for="role in roles" :key="role.id" :value="role.name">
+                                        {{ formatRoleName(role.name) }}
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
                     </div>
                     <div>
-                        <Button @click="clearFilters" class="w-full"
-                            >Limpiar</Button
-                        >
+                        <Button @click="clearFilters" class="w-full">Limpiar</Button>
                     </div>
                 </div>
 
                 <!-- Botón nuevo usuario -->
                 <div class="mb-4 flex justify-end">
-                    <Button
-                        class="bg-green-600 text-white hover:bg-green-500"
-                        @click="newUser"
-                    >
+                    <Button class="bg-green-600 text-white hover:bg-green-500" @click="newUser">
                         <CirclePlus class="mr-2 h-4 w-4" />
                         Nuevo Usuario
                     </Button>
@@ -178,25 +179,13 @@ const clearFilters = () => {
                 </TableHead>
 
                 <TableBody>
-                    <TableRow
-                        v-for="user in props.users.data"
-                        :key="user.id"
-                        striped
-                        hover
-                    >
+                    <TableRow v-for="user in props.users.data" :key="user.id" striped hover>
                         <TableCell>
                             <div class="flex items-center">
-                                <div
-                                    class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500"
-                                >
-                                    <span
-                                        class="text-xs font-medium text-white"
-                                        >{{ user.initials }}</span
-                                    >
+                                <div class="mr-3 flex h-8 w-8 items-center justify-center rounded-full bg-indigo-500">
+                                    <span class="text-xs font-medium text-white">{{ user.initials }}</span>
                                 </div>
-                                <span class="font-medium">{{
-                                    user.full_name
-                                }}</span>
+                                <span class="font-medium">{{ user.full_name }}</span>
                             </div>
                         </TableCell>
                         <TableCell>{{ user.email }}</TableCell>
@@ -207,21 +196,10 @@ const clearFilters = () => {
                             <span v-else class="text-gray-400">Sin DNI</span>
                         </TableCell>
                         <TableCell>
-                            <span
-                                v-for="role in user.roles"
-                                :key="role.id"
-                                class="mr-1 inline-block rounded px-2 py-1 text-xs font-medium"
-                                :class="{
-                                    'bg-red-100 text-red-800':
-                                        role.name === 'admin',
-                                    'bg-blue-100 text-blue-800':
-                                        role.name === 'employee',
-                                    'bg-green-100 text-green-800':
-                                        role.name === 'citizen',
-                                }"
-                            >
+                            <Badge v-for="role in user.roles" :key="role.id" variant="secondary"
+                                class="mr-1 inline-block rounded px-2 py-1 text-xs font-medium bg-blue-100 text-blue-800">
                                 {{ formatRoleName(role.name) }}
-                            </span>
+                            </Badge>
                         </TableCell>
                         <TableCell>
                             {{
@@ -233,20 +211,12 @@ const clearFilters = () => {
                         <TableCell>
                             <div class="flex space-x-2">
                                 <button @click="editUser(user)" title="Editar">
-                                    <SquarePen
-                                        class="h-4 w-4 text-yellow-500"
-                                    />
+                                    <SquarePen class="h-4 w-4 text-yellow-500" />
                                 </button>
-                                <button
-                                    @click="asignarPermisos(user)"
-                                    title="Asignar permisos"
-                                >
+                                <button @click="asignarPermisos(user)" title="Asignar permisos">
                                     <Key class="h-4 w-4 text-indigo-600" />
                                 </button>
-                                <button
-                                    @click="deleteUser(user)"
-                                    title="Eliminar"
-                                >
+                                <button @click="deleteUser(user)" title="Eliminar">
                                     <Trash2 class="h-4 w-4 text-red-500" />
                                 </button>
                             </div>

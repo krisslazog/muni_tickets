@@ -221,7 +221,7 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function updatePermission(Request $request, string $id)
+    public function storeAssignPermission(Request $request, string $id)
     {
         $user = User::findOrFail($id);
 
@@ -232,6 +232,9 @@ class UserController extends Controller
             'permissions.*' => ['integer', 'exists:permissions,id'],
         ]);
 
-        dd($request->all());
+        $user->syncRoles($request->input('roles', []));
+        $user->syncPermissions($request->input('permissions', []));
+
+        return redirect()->route('admin.users.index')->with('success', 'Roles y permisos asignados correctamente.');
     }
 }

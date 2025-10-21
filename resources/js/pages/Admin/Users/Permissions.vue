@@ -28,6 +28,22 @@ const form = useForm({
     permissions: (props.user?.permissions ?? []).map((p: any) => p.id),
 })
 
+function toggleRole(id: number, checked: boolean) {
+    if (checked) {
+        if (!form.roles.includes(id)) form.roles.push(id)
+    } else {
+        form.roles = form.roles.filter((rid: any) => rid !== id)
+    }
+}
+
+function togglePermission(id: number, checked: boolean) {
+    if (checked) {
+        if (!form.permissions.includes(id)) form.permissions.push(id)
+    } else {
+        form.permissions = form.permissions.filter((pid: any) => pid !== id)
+    }
+}
+
 
 const submit = () => {
     form.post(route('admin.users.store-assign-permission', props.user.id), {
@@ -77,7 +93,8 @@ const submit = () => {
                             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                 <label v-for="role in props.roles" :key="role.id"
                                     class="flex items-center gap-2 rounded-md border border-gray-200 dark:border-gray-700 p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer">
-                                    <Checkbox v-model:checked="form.roles" :value="role.id" />
+                                    <Checkbox :model-value="form.roles.includes(role.id)"
+                                        @update:model-value="(checked: any) => toggleRole(role.id, checked)" />
                                     <span class="text-sm text-gray-700 dark:text-gray-200">
                                         {{ role.description ?? role.name }}
                                     </span>
@@ -100,7 +117,8 @@ const submit = () => {
                             <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-3">
                                 <label v-for="perm in props.permissions" :key="perm.id"
                                     class="flex items-center gap-2 rounded-md border border-gray-200 dark:border-gray-700 p-3 hover:bg-gray-50 dark:hover:bg-gray-800 transition cursor-pointer">
-                                    <Checkbox v-model:checked="form.permissions" :value="perm.id" />
+                                    <Checkbox :model-value="form.permissions.includes(perm.id)"
+                                        @update:model-value="(checked: any) => togglePermission(perm.id, checked)" />
                                     <span class="text-sm text-gray-700 dark:text-gray-200">
                                         {{ perm.description ?? perm.name }}
                                     </span>
