@@ -58,12 +58,12 @@ function submitForm() {
 </script>
 
 <template>
+
     <Head title="Editar Categoría" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div
-            class="mx-auto mt-6 w-full max-w-full rounded-lg border bg-card p-6 text-card-foreground shadow-sm sm:max-w-xl md:max-w-2xl lg:max-w-4xl"
-        >
+            class="mx-auto mt-6 w-full max-w-full rounded-lg border bg-card p-6 text-card-foreground shadow-sm sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
             <div class="mb-6">
                 <h1 class="text-2xl font-bold">Editar Categoría</h1>
                 <p class="mt-1 text-sm text-muted-foreground">
@@ -74,80 +74,46 @@ function submitForm() {
             <form @submit.prevent="submitForm" class="space-y-6">
                 <!-- Nombre -->
                 <div>
-                    <label
-                        for="name"
-                        class="mb-2 block text-sm font-medium text-foreground"
-                        >Nombre</label
-                    >
-                    <input
-                        type="text"
-                        id="name"
-                        v-model="form.name"
+                    <label for="name" class="mb-2 block text-sm font-medium text-foreground">Nombre</label>
+                    <input type="text" id="name" v-model="form.name"
                         class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                         :class="{
                             'border-destructive focus-visible:ring-destructive':
                                 props.errors.name,
-                        }"
-                        placeholder="Nombre de la categoría"
-                    />
-                    <p
-                        v-if="props.errors.name"
-                        class="mt-2 text-sm font-medium text-destructive"
-                    >
+                        }" placeholder="Nombre de la categoría" />
+                    <p v-if="props.errors.name" class="mt-2 text-sm font-medium text-destructive">
                         {{ props.errors.name }}
                     </p>
                 </div>
 
                 <!-- Descripción -->
                 <div>
-                    <label
-                        for="description"
-                        class="mb-2 block text-sm font-medium text-foreground"
-                        >Descripción</label
-                    >
-                    <input
-                        type="text"
-                        id="description"
-                        v-model="form.description"
+                    <label for="description" class="mb-2 block text-sm font-medium text-foreground">Descripción</label>
+                    <input type="text" id="description" v-model="form.description"
                         class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
                         :class="{
                             'border-destructive focus-visible:ring-destructive':
                                 props.errors.description,
-                        }"
-                        placeholder="Descripción de la categoría"
-                    />
-                    <p
-                        v-if="props.errors.description"
-                        class="mt-2 text-sm font-medium text-destructive"
-                    >
+                        }" placeholder="Descripción de la categoría" />
+                    <p v-if="props.errors.description" class="mt-2 text-sm font-medium text-destructive">
                         {{ props.errors.description }}
                     </p>
                 </div>
 
                 <!-- Checkbox Estado -->
                 <div class="flex items-center space-x-2">
-                    <input
-                        type="checkbox"
-                        id="status"
-                        v-model="form.status"
-                        class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground"
-                    />
-                    <label
-                        for="status"
-                        class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
-                    >
+                    <input type="checkbox" id="status" v-model="form.status"
+                        class="peer h-4 w-4 shrink-0 rounded-sm border border-primary ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50 data-[state=checked]:bg-primary data-[state=checked]:text-primary-foreground" />
+                    <label for="status"
+                        class="text-sm leading-none font-medium peer-disabled:cursor-not-allowed peer-disabled:opacity-70">
                         Activo
                     </label>
                 </div>
 
                 <!-- Botón Guardar al final -->
                 <div class="flex justify-end border-t border-border pt-6">
-                    <Button
-                        type="submit"
-                        :disabled="submitdisabled"
-                        class="bg-green-600 text-white hover:bg-green-500"
-                        >Actualizar</Button
-                    >
+                    <Button type="submit" :disabled="submitdisabled"
+                        class="bg-green-600 text-white hover:bg-green-500">Actualizar</Button>
                 </div>
             </form>
         </div>
