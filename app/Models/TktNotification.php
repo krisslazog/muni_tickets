@@ -24,7 +24,7 @@ class Tkt_notification extends Model
     // Relación con ticket
     public function ticket()
     {
-        return $this->belongsTo(Tkt_ticket::class);
+        return $this->belongsTo(TktTicket::class);
     }
 
     // Relación con persona

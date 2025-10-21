@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Tickets;
 
 use App\Http\Controllers\Controller;
-use App\Models\Tkt_category;
+use App\Models\TktCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,7 +13,7 @@ class CategoryController extends Controller
     // Mostrar listado de categorias
     public function index(Request $request)
     {
-        $categories = Tkt_category::all();
+        $categories = TktCategory::all();
 
         return Inertia::render('Tickets/Category/Index',
             [
@@ -37,7 +37,7 @@ class CategoryController extends Controller
             'status' => 'boolean',
         ]);
         // Crear la categoría en la base de datos usando el modelo Category
-        Tkt_category::create([
+        TktCategory::create([
             'name' => $request->name,
             'description' => $request->description,
             'status' => $request->status ?? true,
@@ -50,7 +50,7 @@ class CategoryController extends Controller
     public function edit($id)
     {
         //Buscar categoria por id
-        $category = Tkt_category::findOrFail($id);
+        $category = TktCategory::findOrFail($id);
         //Retornar vista con la categoria
         return Inertia::render('Tickets/Category/Edit', [
             'category' => $category,
@@ -66,7 +66,7 @@ class CategoryController extends Controller
             'status' => 'boolean',
         ]);
         //Buscar categoria por id
-        $category = Tkt_category::findOrFail($id);
+        $category = TktCategory::findOrFail($id);
 
         //Actualizar categoria
         $category->update([

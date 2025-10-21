@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Tkt_status extends Model
+class TktPriority extends Model
 {
-    protected $table = 'tkt_statuses';
+    protected $table = 'tkt_priorities';
 
     protected $fillable = [
         'name',
@@ -24,6 +24,6 @@ class Tkt_status extends Model
     // Relación uno a muchos: tickets con esta prioridad
     public function tickets()
     {
-        return $this->hasMany(Tkt_ticket::class, 'status_id');
+        return $this->hasMany(TktTicket::class, 'priority_id');
     }
 }

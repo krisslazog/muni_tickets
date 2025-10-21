@@ -3,16 +3,21 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
-use App\Models\Tkt_category;
-use App\Models\Tkt_priority;
-use App\Models\Tkt_status;
-use App\Models\Tkt_attachment;
-use App\Models\Tkt_comment;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use App\Models\TktCategory;
+use App\Models\TktPriority;
+use App\Models\TktStatus;
+use App\Models\TktComment;
+use Spatie\MediaLibrary\HasMedia;
+use Spatie\MediaLibrary\InteractsWithMedia;
 use App\Models\Area;
 use App\Models\Person;
 
-class Tkt_ticket extends Model
+class TktTicket extends Model implements HasMedia
 {
+    use HasFactory;
+    use InteractsWithMedia;
+
     protected $table = 'tkt_tickets';
 
     protected $fillable = [
@@ -36,19 +41,19 @@ class Tkt_ticket extends Model
     // Relación con categoría
     public function category()
     {
-        return $this->belongsTo(Tkt_category::class);
+        return $this->belongsTo(TktCategory::class);
     }
 
     // Relación con prioridad
     public function priority()
     {
-        return $this->belongsTo(Tkt_priority::class);
+        return $this->belongsTo(TktPriority::class);
     }
 
     // Relación con estado
     public function status()
     {
-        return $this->belongsTo(Tkt_status::class);
+        return $this->belongsTo(TktStatus::class);
     }
 
     // Relación con área
@@ -68,14 +73,17 @@ class Tkt_ticket extends Model
     {
         return $this->belongsTo(Person::class, 'assignee_id');
     }
-    // Relación con adjuntos
-    public function attachments()
+    // Relación con attachments
+    public function registerMediaCollections(): void
     {
-        return $this->hasMany(Tkt_attachment::class);
+        $this->addMediaCollection('attachments')
+            // Opcional: define qué tipos de archivo aceptas
+            ->acceptsMimeTypes(['image/jpeg', 'image/png', 'application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document']);
     }
     // Relación con comentarios
     public function comments()
     {
-        return $this->hasMany(Tkt_comment::class);
+        // --- ¡CORRECCIÓN FUTURA AQUÍ! ---
+        return $this->hasMany(TktComment::class); // <-- CORREGIDO (sin guion bajo)
     }
 }

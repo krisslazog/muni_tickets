@@ -83,7 +83,6 @@ const breadcrumbs: BreadcrumbItem[] = [
                     </div>
                 </div>
                 <!--fin mensaje flash-->
-
                 <!-- 6. Botón de Nueva Área -->
                 <div class="mb-4 flex justify-end">
                     <Button
@@ -95,52 +94,47 @@ const breadcrumbs: BreadcrumbItem[] = [
                     </Button>
                 </div>
             </div>
-
-            <!-- 7. Tabla con el nuevo estilo -->
-            <div class="overflow-x-auto rounded-lg border">
-                <Table hover bordered responsive>
-                    <TableHead sticky>
-                        <TableRow>
-                            <TableCell>ID</TableCell>
-                            <TableCell>Nombre</TableCell>
-                            <TableCell>Descripción</TableCell>
-                            <TableCell>Estado</TableCell>
-                            <TableCell class="text-center">Acciones</TableCell>
-                        </TableRow>
-                    </TableHead>
-                    <TableBody>
-                        <TableRow v-for="area in props.areas" :key="area.id">
-                            <TableCell>{{ area.id }}</TableCell>
-                            <TableCell class="font-medium">{{
-                                area.name
-                            }}</TableCell>
-                            <TableCell>{{ area.description }}</TableCell>
-                            <TableCell>
-                                <span
-                                    class="rounded px-2 py-1 text-xs font-medium"
-                                    :class="
-                                        area.status
-                                            ? 'bg-green-100 text-green-800'
-                                            : 'bg-red-100 text-red-800'
-                                    "
-                                >
-                                    {{ area.status ? 'Activo' : 'Inactivo' }}
-                                </span>
-                            </TableCell>
-                            <TableCell class="text-center">
-                                <Button
-                                    variant="outline"
-                                    size="icon"
-                                    class="h-8 w-8 border-yellow-500 text-yellow-500 hover:bg-yellow-50 hover:text-yellow-600"
-                                    @click="editArea(area)"
-                                >
-                                    <SquarePen class="h-4 w-4" />
-                                </Button>
-                            </TableCell>
-                        </TableRow>
-                    </TableBody>
-                </Table>
-            </div>
+            <Table hover bordered responsive>
+                <TableHead sticky>
+                    <TableRow>
+                        <TableCell header>ID</TableCell>
+                        <TableCell header>Nombre</TableCell>
+                        <TableCell header>Descripción</TableCell>
+                        <TableCell header>Estado</TableCell>
+                        <TableCell class="text-center">Acciones</TableCell>
+                    </TableRow>
+                </TableHead>
+                <TableBody>
+                    <TableRow v-for="area in props.areas" :key="area.id">
+                        <TableCell>{{ area.id }}</TableCell>
+                        <TableCell class="font-medium">{{
+                            area.name
+                        }}</TableCell>
+                        <TableCell>{{ area.description }}</TableCell>
+                        <TableCell>
+                            <span
+                                class="rounded px-2 py-1 text-xs font-medium"
+                                :class="
+                                    area.status
+                                        ? 'bg-green-100 text-green-800'
+                                        : 'bg-red-100 text-red-800'
+                                "
+                            >
+                                {{ area.status ? 'Activo' : 'Inactivo' }}
+                            </span>
+                        </TableCell>
+                        <TableCell class="text-center align-middle">
+                            <button
+                                @click="editArea(area)"
+                                class="inline-flex items-center justify-center rounded bg-yellow-500 p-1 shadow-none hover:bg-yellow-400"
+                                style="line-height: 1"
+                            >
+                                <SquarePen class="h-4 w-4" color="white" />
+                            </button>
+                        </TableCell>
+                    </TableRow>
+                </TableBody>
+            </Table>
         </div>
     </AppLayout>
 </template>

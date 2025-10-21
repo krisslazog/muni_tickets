@@ -4,9 +4,9 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Tkt_category extends Model
+class TktStatus extends Model
 {
-    protected $table = 'tkt_categories';
+    protected $table = 'tkt_statuses';
 
     protected $fillable = [
         'name',
@@ -21,9 +21,9 @@ class Tkt_category extends Model
 
     // Relaciones
 
-    // Relación uno a muchos: tickets de esta categoría
+    // Relación uno a muchos: tickets con esta prioridad
     public function tickets()
     {
-        return $this->hasMany(Tkt_ticket::class, 'category_id');
+        return $this->hasMany(TktTicket::class, 'status_id');
     }
 }

@@ -3,34 +3,34 @@
 namespace App\Http\Controllers\Tickets;
 
 use App\Http\Controllers\Controller;
-use App\Models\Tkt_ticket;
-use App\Models\Tkt_category;
-use App\Models\Tkt_priority;
-use App\Models\Tkt_notifications;
-use App\Models\Tkt_status;
-use App\Models\Tkt_attachment;
+use App\Models\TktTicket;
+use App\Models\TktCategory;
+use App\Models\TktPriority;
+use App\Models\TktStatus;
 use App\Models\Area;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
-use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Auth; // <-- 1. IMPORTACIÓN AÑADIDA
+use Illuminate\Support\Facades\Redirect; // <-- 2. IMPORTACIÓN AÑADIDA
+use Illuminate\Support\Facades\Route; // <-- 3. IMPORTACIÓN AÑADIDA
 
 class TicketsController extends Controller
 {
     /**
-     * Muestra la tabla con la lista de todos los tickets.
+     * Muestra la tabla con la lista de todos los tickets.  
      */
     public function index()
     {
-        $tickets = Tkt_ticket::with(['category', 'priority', 'status', 'requester'])
+        $tickets = TktTicket::with(['category', 'priority', 'status', 'requester'])
                              ->latest() 
                              ->paginate(15);
 
         // Esta es la versión correcta que SÍ envía los datos para los combos/filtros
         return Inertia::render('Tickets/Tickets/Index', [
             'tickets' => $tickets,
-            'categories' => Tkt_category::all(),
-            'priorities' => Tkt_priority::all(),
-            'statuses' => Tkt_status::all(),
+            'categories' => TktCategory::all(),
+            'priorities' => TktPriority::all(),
+            'statuses' => TktStatus::all(),
             'areas' => Area::all(),
         ]);
     }
@@ -41,8 +41,8 @@ class TicketsController extends Controller
     public function create()
     {
         return Inertia::render('Tickets/Tickets/Create', [
-            'categories' => Tkt_category::all(),
-            'priorities' => Tkt_priority::all(),
+            'categories' => TktCategory::all(),
+            'priorities' => TktPriority::all(),
             'areas' => Area::all(['id', 'name']),
         ]);
     }
@@ -52,40 +52,44 @@ class TicketsController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. Validación de los datos
+        // 1. Validación de los datos de entrada
         $validatedData = $request->validate([
-            'title'           => 'required|string|max:255',
-            'description'     => 'required|string',
-            'category_id' => 'required|exists:tkt_categories,id',
-            'priority_id' => 'required|exists:tkt_priorities,id',
-            'area_id'         => 'nullable|exists:areas,id', // Lo dejamos opcional (nullable)
-            'attachment'      => 'nullable|image|mimes:jpeg,png,jpg,gif|max:2048', // Validamos el adjunto
+            'title'         => 'required|string|max:255',
+            'description'   => 'required|string',
+            'category_id'   => 'required|integer|exists:tkt_categories,id',
+            'priority_id'   => 'required|integer|exists:tkt_priorities,id',
+            'area_id'       => 'required|exists:areas,id',
+            'attachments'   => 'nullable|array', // Valida que 'attachments' sea un array si se envía
+            'attachments.*' => 'file|mimes:jpg,jpeg,png,pdf,doc,docx|max:2048', // Valida cada archivo en el array
         ]);
 
-        // 2. Creación del ticket
-        $ticket = Tkt_ticket::create([
-            'title' => $validatedData['title'],
-            'description' => $validatedData['description'],
-            'category_id' => $validatedData['category_id'],
-            'priority_id' => $validatedData['priority_id'],
-            'area_id' => 1,
-            'status_id' => 1, // Asigna un estado inicial por defecto (ej: ID 1 = "Abierto")
-            'requester_id' => Auth::id(), // Asigna el ID del usuario autenticado
-            'assignee_id' => 1, // Sin asignar inicialmente
-        ]);
-
-        // 3. Guardar adjunto
-        if ($request->hasFile('attachment')) {
-            $file = $request->file('attachment');
-            $originalName = $file->getClientOriginalName();
-            $path = $file->store('attachments', 'public');
-
-            $ticket->attachments()->create([
-                'file_name' => $originalName,
-                'file_path' => $path,
-            ]);
+        // 2. Obtener el estado inicial de forma dinámica
+        $initialStatus = TktStatus::where('name', 'Abierto')->first();
+        if (!$initialStatus) {
+            return back()->withErrors(['status_id' => 'Error: No se encontró el estado inicial "Abierto".']);
         }
-        // 4. Redirección con mensaje de éxito
+
+        // 3. Creación del ticket con los datos correctos
+        $ticket = TktTicket::create([
+            'title'         => $validatedData['title'],
+            'description'   => $validatedData['description'],
+            'category_id'   => $validatedData['category_id'],
+            'priority_id'   => $validatedData['priority_id'],
+            'area_id'       => $validatedData['area_id'],
+            'status_id'     => $initialStatus->id,
+            'requester_id' => Auth::id(),
+            'assignee_id'   => 1,      // CORRECTO: Sin asignar inicialmente
+        ]);
+
+        // 4. Guardar adjuntos (si existen) de forma más limpia
+        if ($request->hasFile('attachments')) {
+            $ticket->addMultipleMediaFromRequest(['attachments'])
+                   ->each(fn ($fileAdder) => $fileAdder->toMediaCollection('attachments'));
+        }
+        
+        // 5. Redirección con mensaje de éxito
         return to_route('tickets.tickets.index')->with('success', '¡Ticket creado exitosamente!');
+        
+
     }
 }

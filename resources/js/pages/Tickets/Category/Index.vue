@@ -59,10 +59,10 @@ const breadcrumbs: BreadcrumbItem[] = [
                 </p>
             </div>
             <div>
-                <!-- mensaje flash -->
+                <!-- Mensaje flash -->
                 <div
                     v-if="props.flash.success"
-                    class="mb-4 flex items-center rounded-lg border border-green-300 bg-green-50 p-4 text-sm text-green-800 dark:border-green-800 dark:bg-gray-800 dark:text-green-400"
+                    class="mt-4 mb-4 flex items-center rounded-lg border border-green-300 bg-green-50 p-4 text-sm text-green-800 dark:border-green-800 dark:bg-gray-800 dark:text-green-400"
                     role="alert"
                 >
                     <svg

@@ -3,7 +3,7 @@
 namespace App\Http\Controllers\Tickets;
 
 use App\Http\Controllers\Controller;
-use App\Models\Tkt_priority;
+use App\Models\TktPriority;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -13,7 +13,7 @@ class PriorityController extends Controller
     // Mostrar listado de prioridades
     public function index(Request $request)
     {
-        $priority = Tkt_priority::all();
+        $priority = TktPriority::all();
 
         return Inertia::render('Tickets/Priority/Index',
             [
@@ -37,7 +37,7 @@ class PriorityController extends Controller
             'status' => 'boolean',
         ]);
         // Crear la categoría en la base de datos usando el modelo prioridad
-        Tkt_priority::create([
+        TktPriority::create([
             'name' => $request->name,
             'description' => $request->description,
             'status' => $request->status ?? true,
@@ -50,7 +50,7 @@ class PriorityController extends Controller
     public function edit($id)
     {
         //Buscar prioridad por id
-        $priority = Tkt_priority::findOrFail($id);
+        $priority = TktPriority::findOrFail($id);
         //Retornar vista con la prioridad
         return Inertia::render('Tickets/Priority/Edit', [
             'priority' => $priority,
@@ -66,7 +66,7 @@ class PriorityController extends Controller
             'status' => 'boolean',
         ]);
         //Buscar prioridad por id
-        $priority = Tkt_priority::findOrFail($id);
+        $priority = TktPriority::findOrFail($id);
 
         //Actualizar prioridad
         $priority->update([

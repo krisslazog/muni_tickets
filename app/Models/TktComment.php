@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Tkt_comment extends Model
+class TktComment extends Model
 {
     protected $table = 'tkt_categories';
 
@@ -19,7 +19,7 @@ class Tkt_comment extends Model
     // Cada comentario pertenece a un ticket
     public function ticket()
     {
-        return $this->belongsTo(Tkt_ticket::class);
+        return $this->belongsTo(TktTicket::class);
     }
 
     // Cada comentario pertenece a un usuario/persona
