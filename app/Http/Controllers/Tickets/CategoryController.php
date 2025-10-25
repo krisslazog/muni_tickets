@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\TktCategory;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Validation\Rule;
 
 class CategoryController extends Controller
 {
@@ -13,7 +14,8 @@ class CategoryController extends Controller
     // Mostrar listado de categorias
     public function index(Request $request)
     {
-        $categories = TktCategory::all();
+        $categories = TktCategory::with('createdBy', 'updatedBy')
+            ->paginate(10); // O el número que prefieras
 
         return Inertia::render('Tickets/Category/Index',
             [
@@ -31,18 +33,14 @@ class CategoryController extends Controller
      public function store(Request $request)
     {
         // Validar los datos que vienen del formulario
-        $request->validate([
-            'name' => 'required|string|max:255',
+            $validatedData = $request->validate([
+            'name' => 'required|string|max:255|unique:tkt_categories', 
             'description' => 'nullable|string',
-            'status' => 'boolean',
+            'status' => 'required|boolean',
         ]);
         // Crear la categoría en la base de datos usando el modelo Category
-        TktCategory::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'status' => $request->status ?? true,
-        ]);
-        // Redirigir al listado de categorías después de crearla
+        TktCategory::create($validatedData);
+        
         return redirect()->route('tickets.category.index')
                          ->with('success', 'Categoría creada correctamente.');
     }
@@ -56,27 +54,29 @@ class CategoryController extends Controller
             'category' => $category,
         ]);
     }
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
-
-        // Validar los datos que vienen del formulario
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'boolean',
-        ]);
-        //Buscar categoria por id
+        // Buscar categoria primero
         $category = TktCategory::findOrFail($id);
 
-        //Actualizar categoria
-        $category->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'status' => $request->status ?? true,
+        // 6. CORREGIDO: Validación de 'update'
+        $validatedData = $request->validate([
+            'name' => [
+                'required',
+                'string',
+                'max:255',
+                // Le decimos que la regla 'unique' ignore el ID actual
+                Rule::unique('tkt_categories')->ignore($category->id),
+            ],
+            'description' => 'nullable|string',
+            'status' => 'required|boolean', // 7. CORREGIDO: Lógica de status
         ]);
-        // Redirigir al listado de categorías después de actualizar
+
+        // 8. MEJORADO: Actualización simple
+        // El Trait 'Auditable' se encarga de 'updated_by' automáticamente
+        $category->update($validatedData);
+        
         return redirect()->route('tickets.category.index')
                          ->with('success', 'Categoría actualizada correctamente.');
     }
-
 }

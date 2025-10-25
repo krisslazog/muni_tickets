@@ -17,13 +17,13 @@ return new class extends Migration
             $table->text('description')->nullable();
 
             // Claves foráneas
-            $table->foreignId('category_id')->constrained('tkt_categories')->onDelete('cascade');
-            $table->foreignId('priority_id')->constrained('tkt_priorities')->onDelete('cascade');
-            $table->foreignId('status_id')->constrained('tkt_statuses')->onDelete('cascade');
-            $table->foreignId('area_id')->constrained('areas')->onDelete('cascade');
+            $table->foreignId('category_id')->nullable()->constrained('tkt_categories')->onDelete('set null');
+            $table->foreignId('priority_id')->nullable()->constrained('tkt_priorities')->onDelete('set null');
+            $table->foreignId('status_id')->constrained('tkt_statuses')->onDelete('restrict');
+            $table->foreignId('area_id')->nullable()->constrained('areas')->onDelete('set null');
 
-            $table->foreignId('requester_id')->constrained('persons')->onDelete('cascade');
-            $table->foreignId('assignee_id')->constrained('persons')->onDelete('cascade');
+            $table->foreignId('requester_id')->constrained('users')->onDelete('cascade');
+            $table->foreignId('assignee_id')->nullable()->constrained('users')->onDelete('set null');
 
             $table->timestamps(); // created_at & updated_at
             $table->timestamp('resolved_at')->nullable();

@@ -2,14 +2,16 @@
 
 namespace App\Models;
 
+use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
-class Person extends Model
+class Person extends Model implements Auditable
 {
-    use HasFactory;
-
-    protected $table = 'persons';
+    use HasFactory, AuditableTrait;
+         protected $table = 'persons';
 
     protected $fillable = [
         'first_name',
@@ -21,8 +23,10 @@ class Person extends Model
         'birth_date',
         'phone',
         'email',
+        'city',
         'address',
-        'status'
+        'user_id',
+        'status',
     ];
 
     // Casts para tipos específicos
@@ -31,35 +35,15 @@ class Person extends Model
         'status' => 'boolean'
     ];
 
-    // Relaciones
-
-    // Relación uno a uno con User
     public function user()
     {
-        return $this->hasOne(User::class);
+        return $this->belongsTo(User::class, 'user_id');
     }
 
-    // Relación uno a muchos: tickets que solicitó
-    public function requestedTickets()
+    protected function fullName(): Attribute
     {
-        return $this->hasMany(Tkt_ticket::class, 'requester_id');
-    }
-
-    // Relación uno a muchos: tickets que tiene asignados
-    public function assignedTickets()
-    {
-        return $this->hasMany(Tkt_ticket::class, 'assignee_id');
-    }
-
-    // Relación comentarios realizados
-    public function comments()
-    {
-        return $this->hasMany(Tkt_comment::class, 'person_id');
-    }
-
-    // Relación notificaciones
-    public function notifications()
-    {
-        return $this->hasMany(Tkt_notification::class, 'person_id');
+        return Attribute::make(
+            get: fn () => "{$this->first_name} {$this->last_name_paternal} {$this->last_name_maternal}"
+        );
     }
 }

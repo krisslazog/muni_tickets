@@ -11,12 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('areas', function (Blueprint $table) {
+        Schema::create('tkt_categories', function (Blueprint $table) {
             $table->id(); // id int [PK]
-            $table->string('name');
+            $table->string('name')->unique();   
             $table->text('description')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps(); // created_at & updated_at
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null'); 
+            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
         });
     }
 
@@ -25,6 +27,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('areas');
+        Schema::dropIfExists('tkt_categories');
     }
 };

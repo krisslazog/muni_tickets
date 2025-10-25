@@ -11,16 +11,14 @@ return new class extends Migration
      */
     public function up(): void
     {
-        Schema::create('tkt_attachments', function (Blueprint $table) {
+        Schema::create('tkt_comments', function (Blueprint $table) {
             $table->id(); // id int [PK]
 
-            // Clave foránea al ticket
+            // Claves foráneas
             $table->foreignId('ticket_id')->constrained('tkt_tickets')->onDelete('cascade');
+            $table->foreignId('user_id')->nullable()->constrained('users')->onDelete('set null');
 
-            $table->string('file_path');
-            $table->string('file_name');
-            $table->timestamp('uploaded_at')->useCurrent();
-
+            $table->text('content');
             $table->timestamps(); // created_at & updated_at
         });
     }
@@ -30,6 +28,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::dropIfExists('tkt_attachments');
+        Schema::dropIfExists('tkt_comments');
     }
 };

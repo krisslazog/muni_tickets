@@ -2,10 +2,13 @@
 
 namespace App\Models;
 
+use App\Traits\Auditable;
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class TktPriority extends Model
 {
+    use HasFactory, Auditable;
     protected $table = 'tkt_priorities';
 
     protected $fillable = [
@@ -25,5 +28,15 @@ class TktPriority extends Model
     public function tickets()
     {
         return $this->hasMany(TktTicket::class, 'priority_id');
+    }
+    
+    public function createdBy()
+    {
+        return $this->belongsTo(User::class, 'created_by');
+    }
+
+    public function updatedBy()
+    {
+        return $this->belongsTo(User::class, 'updated_by');
     }
 }

@@ -16,11 +16,11 @@ return new class extends Migration
 
             // Claves foráneas
             $table->foreignId('ticket_id')->constrained('tkt_tickets')->onDelete('cascade');
-            $table->foreignId('person_id')->constrained('persons')->onDelete('cascade');
+            $table->foreignId('user_id')->constrained('users')->onDelete('cascade');
 
             $table->text('message');
             $table->boolean('is_read')->default(false);
-            $table->timestamp('created_at')->useCurrent();
+            $table->timestamps();
         });
     }
 

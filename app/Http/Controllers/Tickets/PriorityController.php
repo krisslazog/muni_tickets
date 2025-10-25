@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\TktPriority;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
+use Illuminate\Validation\Rule;
 
 class PriorityController extends Controller
 {
@@ -13,12 +14,12 @@ class PriorityController extends Controller
     // Mostrar listado de prioridades
     public function index(Request $request)
     {
-        $priority = TktPriority::all();
+    $priorities = TktPriority::with('createdBy', 'updatedBy')
+            ->paginate(10);
 
-        return Inertia::render('Tickets/Priority/Index',
-            [
-                'priorities' => $priority ,
-            ]);
+        return Inertia::render('Tickets/Priority/Index', [
+            'priorities' => $priorities,
+        ]);
     }
     
      // Mostrar formulario para crear una nueva prioridad
@@ -31,18 +32,15 @@ class PriorityController extends Controller
      public function store(Request $request)
     {
         // Validar los datos que vienen del formulario
-        $request->validate([
-            'name' => 'required|string|max:255',
+        $validatedData = $request->validate([
+            // 'tkt_priorities' es el nombre de tu tabla
+            'name' => 'required|string|max:255|unique:tkt_priorities',
             'description' => 'nullable|string',
-            'status' => 'boolean',
+            'status' => 'required|boolean', // <-- 4. Mejorado
         ]);
         // Crear la categoría en la base de datos usando el modelo prioridad
-        TktPriority::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'status' => $request->status ?? true,
-        ]);
-        // Redirigir al listado de categorías después de crearla
+        TktPriority::create($validatedData);
+        
         return redirect()->route('tickets.priority.index')
                          ->with('success', 'Prioridad creada correctamente.');
     }
@@ -56,27 +54,25 @@ class PriorityController extends Controller
             'priority' => $priority,
         ]);
     }
-    public function update(Request $request,$id)
+    public function update(Request $request, $id)
     {
-
-        // Validar los datos que vienen del formulario
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'boolean',
-        ]);
-        //Buscar prioridad por id
+        // Buscar prioridad por id
         $priority = TktPriority::findOrFail($id);
 
-        //Actualizar prioridad
-        $priority->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'status' => $request->status ?? true,
+        $validatedData = $request->validate([
+            'name' => [
+                'required', 'string', 'max:255',
+
+                Rule::unique('tkt_priorities')->ignore($priority->id),
+            ],
+            'description' => 'nullable|string',
+            'status' => 'required|boolean',
         ]);
-        // Redirigir al listado de categorías después de actualizar
+
+        $priority->update($validatedData);
+        
         return redirect()->route('tickets.priority.index')
-                         ->with('success', 'Prioridades actualizada correctamente.');
+                         ->with('success', 'Prioridad actualizada correctamente.');
     }
 
 }

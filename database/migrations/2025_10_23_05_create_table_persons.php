@@ -16,14 +16,20 @@ return new class extends Migration
             $table->string('first_name');
             $table->string('last_name_paternal');
             $table->string('last_name_maternal');
+
+            //Documentos
             $table->string('document_type'); // Ej: DNI, CE, PAS
-            $table->string('document_number')->unique();
+            $table->string('document_number');
+
             $table->enum('gender', ['M', 'F', 'O'])->nullable(); // M: Masculino, F: Femenino, O: Otro
             $table->date('birth_date')->nullable();
             $table->string('phone')->nullable();
-            $table->string('email')->nullable();
+
+            $table->string('email')->nullable()->unique();
+            $table->string('city')->nullable();
             $table->string('address')->nullable();
-            $table->boolean('status')->default(true); // true = activo, false = inactivo            $table->timestamps();
+            $table->foreignId('user_id')->nullable()->unique()->constrained('users')->onDelete('set null');
+            $table->boolean('status')->default(true); // true = activo, false = inactivo
             $table->timestamps();
         });
     }

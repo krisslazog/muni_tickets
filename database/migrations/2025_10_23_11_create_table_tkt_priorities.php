@@ -13,10 +13,12 @@ return new class extends Migration
     {
         Schema::create('tkt_priorities', function (Blueprint $table) {
             $table->id(); // id int [PK]
-            $table->string('name');
+            $table->string('name')->unique();
             $table->text('description')->nullable();
             $table->boolean('status')->default(true);
             $table->timestamps(); // created_at & updated_at
+            $table->foreignId('created_by')->nullable()->constrained('users')->onDelete('set null'); 
+            $table->foreignId('updated_by')->nullable()->constrained('users')->onDelete('set null');
         });
     }
 

@@ -7,6 +7,8 @@ use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Laravel\Fortify\TwoFactorAuthenticatable;
 use Spatie\Permission\Traits\HasRoles;
+use OwenIt\Auditing\Contracts\Auditable;
+use OwenIt\Auditing\Auditable as AuditableTrait;
 
 /**
  * Modelo User - Sistema de Tickets Municipales
@@ -17,15 +19,15 @@ use Spatie\Permission\Traits\HasRoles;
  * @property-read string $full_name
  * @property-read string $initials
  */
-class User extends Authenticatable
+class User extends Authenticatable implements Auditable
 {
-    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles;
+    use HasFactory, Notifiable, TwoFactorAuthenticatable, HasRoles, AuditableTrait;
 
     protected $fillable = [
         'name',
         'email',
         'password',
-        'person_id',
+        'area_id',
     ];
 
     protected $hidden = [
@@ -45,9 +47,34 @@ class User extends Authenticatable
      * Relación con Person
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
+    
     public function person()
     {
-        return $this->belongsTo(Person::class);
+        return $this->hasOne(Person::class, 'user_id');
+    }
+    public function area()
+    {
+        return $this->belongsTo(Area::class, 'area_id');
+    }
+
+    public function requestedTickets()
+    {
+        return $this->hasMany(TktTicket::class, 'requester_id');
+    }
+
+    public function assignedTickets()
+    {
+        return $this->hasMany(TktTicket::class, 'assignee_id');
+    }
+
+    public function comments()
+    {
+        return $this->hasMany(TktComment::class, 'user_id');
+    }
+
+    public function notifications()
+    {
+        return $this->hasMany(TktNotification::class, 'user_id');
     }
 
     /**
