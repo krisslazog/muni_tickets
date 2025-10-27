@@ -36,23 +36,25 @@ const removeAttachment = (index: number) => {
 
 // Función que se ejecuta al enviar el formulario
 const submit = () => {
-    console.log('✅ Enviando formulario...'); // <-- prueba
-    console.log('Ruta:', route('tickets.tickets.store'));
-
     form.post(route('tickets.tickets.store'), {
-        forceFormData: true,
+        forceFormData: true, // Mantén esto si necesitas enviar archivos
         onSuccess: () => {
-            console.log('✅ Ticket creado con éxito');
             form.reset();
+            //Limpiar input de archivos visualmente
+            const inputElement = document.getElementById('attachment') as HTMLInputElement;
+            if (inputElement) {
+                inputElement.value = '';
+            }
         },
         onError: (errors) => {
-            console.error('❌ Errores:', errors);
+            console.error('Errores de validación:', errors);
         },
     });
 };
 </script>
 
 <template>
+
     <Head title="Crear Nuevo Ticket" />
 
     <AppLayout>
@@ -67,23 +69,12 @@ const submit = () => {
                 </p>
             </header>
 
-            <form
-                @submit.prevent="submit"
-                class="space-y-8 rounded-lg border bg-white p-8 shadow-sm dark:bg-gray-800"
-            >
+            <form @submit.prevent="submit" class="space-y-8 rounded-lg border bg-white p-8 shadow-sm dark:bg-gray-800">
                 <div>
                     <Label for="title" class="mb-2 block">Incidencia</Label>
-                    <Input
-                        id="title"
-                        v-model="form.title"
-                        type="text"
-                        placeholder="Ej: Problema al iniciar sesión"
-                        required
-                    />
-                    <div
-                        v-if="form.errors.title"
-                        class="mt-1 text-sm text-red-600"
-                    >
+                    <Input id="title" v-model="form.title" type="text" placeholder="Ej: Problema al iniciar sesión"
+                        required />
+                    <div v-if="form.errors.title" class="mt-1 text-sm text-red-600">
                         {{ form.errors.title }}
                     </div>
                 </div>
@@ -94,96 +85,59 @@ const submit = () => {
                             <SelectValue placeholder="Selecciona tu área" />
                         </SelectTrigger>
                         <SelectContent>
-                            <SelectItem
-                                v-for="area in props.areas"
-                                :key="area.id"
-                                :value="area.id.toString()"
-                            >
+                            <SelectItem v-for="area in props.areas" :key="area.id" :value="area.id.toString()">
                                 {{ area.name }}
                             </SelectItem>
                         </SelectContent>
                     </Select>
-                    <div
-                        v-if="form.errors.area_id"
-                        class="mt-1 text-sm text-red-600"
-                    >
+                    <div v-if="form.errors.area_id" class="mt-1 text-sm text-red-600">
                         {{ form.errors.area_id }}
                     </div>
                 </div>
 
                 <div class="grid grid-cols-1 gap-6 md:grid-cols-2">
                     <div>
-                        <Label for="category" class="mb-2 block"
-                            >Categoría</Label
-                        >
+                        <Label for="category" class="mb-2 block">Categoría</Label>
                         <Select v-model="form.category_id">
                             <SelectTrigger>
-                                <SelectValue
-                                    placeholder="Selecciona una categoría"
-                                />
+                                <SelectValue placeholder="Selecciona una categoría" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem
-                                    v-for="category in props.categories"
-                                    :key="category.id"
-                                    :value="category.id.toString()"
-                                >
+                                <SelectItem v-for="category in props.categories" :key="category.id"
+                                    :value="category.id.toString()">
                                     {{ category.name }}
                                 </SelectItem>
                             </SelectContent>
                         </Select>
-                        <div
-                            v-if="form.errors.category_id"
-                            class="mt-1 text-sm text-red-600"
-                        >
+                        <div v-if="form.errors.category_id" class="mt-1 text-sm text-red-600">
                             {{ form.errors.category_id }}
                         </div>
                     </div>
 
                     <div>
-                        <Label for="priority" class="mb-2 block"
-                            >Prioridad</Label
-                        >
+                        <Label for="priority" class="mb-2 block">Prioridad</Label>
                         <Select v-model="form.priority_id">
                             <SelectTrigger>
-                                <SelectValue
-                                    placeholder="Selecciona una prioridad"
-                                />
+                                <SelectValue placeholder="Selecciona una prioridad" />
                             </SelectTrigger>
                             <SelectContent>
-                                <SelectItem
-                                    v-for="priority in props.priorities"
-                                    :key="priority.id"
-                                    :value="priority.id.toString()"
-                                >
+                                <SelectItem v-for="priority in props.priorities" :key="priority.id"
+                                    :value="priority.id.toString()">
                                     {{ priority.name }}
                                 </SelectItem>
                             </SelectContent>
                         </Select>
-                        <div
-                            v-if="form.errors.priority_id"
-                            class="mt-1 text-sm text-red-600"
-                        >
+                        <div v-if="form.errors.priority_id" class="mt-1 text-sm text-red-600">
                             {{ form.errors.priority_id }}
                         </div>
                     </div>
                 </div>
 
                 <div>
-                    <Label for="description" class="mb-2 block"
-                        >Descripción del Problema</Label
-                    >
-                    <Textarea
-                        id="description"
-                        v-model="form.description"
-                        placeholder="Describe el problema con el mayor detalle posible..."
-                        rows="6"
-                        required
-                    />
-                    <div
-                        v-if="form.errors.description"
-                        class="mt-1 text-sm text-red-600"
-                    >
+                    <Label for="description" class="mb-2 block">Descripción del Problema</Label>
+                    <Textarea id="description" v-model="form.description"
+                        placeholder="Describe el problema con el mayor detalle posible..." rows="6" required />
+                    <div v-if="form.errors.description" class="mt-1 text-sm text-red-600">
                         {{ form.errors.description }}
                     </div>
                 </div>
@@ -192,29 +146,17 @@ const submit = () => {
                     <Label for="attachment" class="mb-2 block">
                         Adjuntar Archivos (Opcional)
                     </Label>
-                    <Input
-                        id="attachment"
-                        type="file"
-                        multiple
-                        accept=".jpg,.jpeg,.png,.pdf,.doc,.docx"
-                        @input="
-                            form.attachments = Array.from(
-                                $event.target.files || [],
-                            )
-                        "
-                    />
+                    <Input id="attachment" type="file" multiple accept=".jpg,.jpeg,.png,.pdf,.doc,.docx" @input="
+                        form.attachments = Array.from(
+                            $event.target.files || [],
+                        )
+                        " />
 
-                    <div
-                        v-if="form.attachments.length > 0"
-                        class="mt-2 text-sm text-gray-500"
-                    >
+                    <div v-if="form.attachments.length > 0" class="mt-2 text-sm text-gray-500">
                         <p>Archivos seleccionados:</p>
                         <ul class="mt-2 list-disc space-y-1 pl-5">
-                            <li
-                                v-for="(file, index) in form.attachments"
-                                :key="file.name"
-                                class="flex items-center justify-between text-gray-600 dark:text-gray-400"
-                            >
+                            <li v-for="(file, index) in form.attachments" :key="file.name"
+                                class="flex items-center justify-between text-gray-600 dark:text-gray-400">
                                 <span>
                                     {{ file.name }}
                                     <span class="text-xs text-gray-400">
@@ -222,24 +164,15 @@ const submit = () => {
                                     </span>
                                 </span>
 
-                                <Button
-                                    type="button"
-                                    variant="ghost"
-                                    size="sm"
-                                    @click="removeAttachment(index)"
-                                    class="ml-2 text-red-500 hover:text-red-700"
-                                    title="Eliminar archivo"
-                                >
+                                <Button type="button" variant="ghost" size="sm" @click="removeAttachment(index)"
+                                    class="ml-2 text-red-500 hover:text-red-700" title="Eliminar archivo">
                                     &#10005;
                                 </Button>
                             </li>
                         </ul>
                     </div>
 
-                    <div
-                        v-if="form.errors.attachments"
-                        class="mt-1 text-sm text-red-600"
-                    >
+                    <div v-if="form.errors.attachments" class="mt-1 text-sm text-red-600">
                         {{ form.errors.attachments }}
                     </div>
                 </div>

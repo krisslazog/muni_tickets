@@ -14,8 +14,7 @@ class CategoryController extends Controller
     // Mostrar listado de categorias
     public function index(Request $request)
     {
-        $categories = TktCategory::with('createdBy', 'updatedBy')
-            ->paginate(10); // O el número que prefieras
+        $categories = TktCategory::all();
 
         return Inertia::render('Tickets/Category/Index',
             [
@@ -33,16 +32,20 @@ class CategoryController extends Controller
      public function store(Request $request)
     {
         // Validar los datos que vienen del formulario
-            $validatedData = $request->validate([
-            'name' => 'required|string|max:255|unique:tkt_categories', 
+        $request->validate([
+            'name' => 'required|string|max:255',
             'description' => 'nullable|string',
-            'status' => 'required|boolean',
+            'status' => 'boolean',
         ]);
-        // Crear la categoría en la base de datos usando el modelo Category
-        TktCategory::create($validatedData);
-        
+        // Crear la estado en la base de datos usando el modelo de estado
+        TktCategory::create([
+            'name' => $request->name,
+            'description' => $request->description,
+            'status' => $request->status ?? true,
+        ]);
+        // Redirigir al listado de estado después de crearla
         return redirect()->route('tickets.category.index')
-                         ->with('success', 'Categoría creada correctamente.');
+                         ->with('success', 'Categoria creada correctamente.');
     }
 
     public function edit($id)
@@ -54,29 +57,26 @@ class CategoryController extends Controller
             'category' => $category,
         ]);
     }
-    public function update(Request $request, $id)
+    public function update(Request $request,$id)
     {
-        // Buscar categoria primero
+
+        // Validar los datos que vienen del formulario
+        $request->validate([
+            'name' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'status' => 'boolean',
+        ]);
+        //Buscar estado por id
         $category = TktCategory::findOrFail($id);
 
-        // 6. CORREGIDO: Validación de 'update'
-        $validatedData = $request->validate([
-            'name' => [
-                'required',
-                'string',
-                'max:255',
-                // Le decimos que la regla 'unique' ignore el ID actual
-                Rule::unique('tkt_categories')->ignore($category->id),
-            ],
-            'description' => 'nullable|string',
-            'status' => 'required|boolean', // 7. CORREGIDO: Lógica de status
+        //Actualizar estado
+        $category->update([
+            'name' => $request->name,
+            'description' => $request->description,
+            'status' => $request->status ?? true,
         ]);
-
-        // 8. MEJORADO: Actualización simple
-        // El Trait 'Auditable' se encarga de 'updated_by' automáticamente
-        $category->update($validatedData);
-        
+        // Redirigir al listado de estados después de actualizar
         return redirect()->route('tickets.category.index')
-                         ->with('success', 'Categoría actualizada correctamente.');
+                         ->with('success', 'Categoria actualizada correctamente.');
     }
 }

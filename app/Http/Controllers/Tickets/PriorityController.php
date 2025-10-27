@@ -14,12 +14,12 @@ class PriorityController extends Controller
     // Mostrar listado de prioridades
     public function index(Request $request)
     {
-    $priorities = TktPriority::with('createdBy', 'updatedBy')
-            ->paginate(10);
+        $priorities = TktPriority::all();
 
-        return Inertia::render('Tickets/Priority/Index', [
-            'priorities' => $priorities,
-        ]);
+        return Inertia::render('Tickets/Priority/Index',
+            [
+                'priorities' => $priorities,
+            ]);
     }
     
      // Mostrar formulario para crear una nueva prioridad

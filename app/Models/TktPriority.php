@@ -32,11 +32,13 @@ class TktPriority extends Model
     
     public function createdBy()
     {
-        return $this->belongsTo(User::class, 'created_by');
+
+    return $this->belongsTo(User::class, 'created_by_id'); 
     }
 
     public function updatedBy()
     {
-        return $this->belongsTo(User::class, 'updated_by');
+   
+    return $this->belongsTo(User::class, 'updated_by_id');
     }
 }

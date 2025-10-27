@@ -17,6 +17,10 @@ class DatabaseSeeder extends Seeder
 
         $this->call([
             RolePermissionSeeder::class,
+            TktPrioritySeeder::class,
+            TktCategorySeeder::class,
+            TktStatusSeeder::class,
+            AreaSeeder::class,
         ]);
     }
 }
