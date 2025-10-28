@@ -2,7 +2,7 @@
 import type { SeparatorProps } from "reka-ui"
 import type { HTMLAttributes } from "vue"
 import { cn } from "@/lib/utils"
-import { Separator } from "@/registry/default/ui/separator"
+import { Separator } from "@/components/ui/separator"
 
 const props = defineProps<
   SeparatorProps & { class?: HTMLAttributes["class"] }
@@ -10,9 +10,5 @@ const props = defineProps<
 </script>
 
 <template>
-  <Separator
-    data-slot="item-separator"
-    orientation="horizontal"
-    :class="cn('my-0', props.class)"
-  />
+  <Separator data-slot="item-separator" orientation="horizontal" :class="cn('my-0', props.class)" />
 </template>

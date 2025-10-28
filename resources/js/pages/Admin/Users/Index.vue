@@ -126,12 +126,13 @@ const clearFilters = () => {
                 <!-- Filtros -->
                 <div class="mb-4 grid grid-cols-1 gap-4 md:grid-cols-4">
                     <div>
-                        <Input v-model="form.search" type="text" placeholder="Buscar por nombre, email..."
-                            class="w-full" @input="debounceSearch" />
+                        <input v-model="form.search" type="text" placeholder="Buscar por nombre, email..."
+                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                            @input="debounceSearch" />
                     </div>
                     <div>
-                        <Input v-model="form.dni" type="text" placeholder="Buscar por DNI..." class="w-full"
-                            @input="debounceSearch" />
+                        <input v-model="form.dni" type="text" placeholder="Buscar por DNI..." @input="debounceSearch"
+                            class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50" />
                     </div>
                     <div>
                         <Select v-model="form.role" class="w-full rounded-md border border-gray-300 px-3 py-2"

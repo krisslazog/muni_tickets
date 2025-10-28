@@ -18,7 +18,7 @@ Route::get('dashboard', function () {
 
 
 // Grupo de rutas para el módulo de tickets
-Route::prefix('tickets')->name('tickets.')->group(function () {
+Route::prefix('tickets')->name('tickets.')->middleware(['auth', 'verified','role:invitado'])->group(function () {
 
 // Rutas para la gestión de Categorias
 
@@ -82,7 +82,7 @@ Route::prefix('tickets')->name('tickets.')->group(function () {
         //Eliminar Prioridad
         Route::delete('status/{id}', [StatusController::class, 'destroy'])
         ->name('status.destroy');
-        
+
 //Nuevo ticket
         // Listar todos los tickets
         Route::get('tickets', [TicketsController::class, 'index'])

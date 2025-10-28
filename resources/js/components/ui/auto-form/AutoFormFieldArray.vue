@@ -4,10 +4,10 @@ import { PlusIcon, TrashIcon } from "lucide-vue-next"
 import { FieldArray, FieldContextKey, useField } from "vee-validate"
 import { computed, provide } from "vue"
 import * as z from "zod"
-import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/registry/default/ui/accordion"
-import { Button } from "@/registry/default/ui/button"
-import { FormItem, FormMessage } from "@/registry/default/ui/form"
-import { Separator } from "@/registry/default/ui/separator"
+import { Accordion, AccordionContent, AccordionItem, AccordionTrigger } from "@/components/ui/accordion"
+import { Button } from "@/components/ui/button"
+import { FormItem, FormMessage } from "@/components/ui/form"
+import { Separator } from "@/components/ui/separator"
 import AutoFormField from "./AutoFormField.vue"
 import AutoFormLabel from "./AutoFormLabel.vue"
 import { beautifyObjectName, getBaseType } from "./utils"
@@ -39,7 +39,7 @@ const itemShape = computed(() => {
   const schema: z.ZodAny = isZodArray(props.schema)
     ? props.schema._def.type
     : isZodDefault(props.schema)
-    // @ts-expect-error missing schema
+      // @ts-expect-error missing schema
       ? props.schema._def.innerType._def.type
       : null
 
@@ -69,20 +69,11 @@ provide(FieldContextKey, fieldContext)
             <AccordionContent>
               <template v-for="(field, index) of fields" :key="field.key">
                 <div class="mb-4 p-1">
-                  <AutoFormField
-                    :field-name="`${fieldName}[${index}]`"
-                    :label="fieldName"
-                    :shape="itemShape!"
-                    :config="config as ConfigItem"
-                  />
+                  <AutoFormField :field-name="`${fieldName}[${index}]`" :label="fieldName" :shape="itemShape!"
+                    :config="config as ConfigItem" />
 
                   <div class="my-4! flex justify-end">
-                    <Button
-                      type="button"
-                      size="icon"
-                      variant="secondary"
-                      @click="remove(index)"
-                    >
+                    <Button type="button" size="icon" variant="secondary" @click="remove(index)">
                       <TrashIcon :size="16" />
                     </Button>
                   </div>
@@ -90,12 +81,7 @@ provide(FieldContextKey, fieldContext)
                 </div>
               </template>
 
-              <Button
-                type="button"
-                variant="secondary"
-                class="mt-4 flex items-center"
-                @click="push(null)"
-              >
+              <Button type="button" variant="secondary" class="mt-4 flex items-center" @click="push(null)">
                 <PlusIcon class="mr-2" :size="16" />
                 Add
               </Button>

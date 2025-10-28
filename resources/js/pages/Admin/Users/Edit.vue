@@ -115,7 +115,7 @@ const goBack = () => {
                             </select>
                             <span v-if="form.errors.document_type" class="text-red-500 text-sm">{{
                                 form.errors.document_type
-                                }}</span>
+                            }}</span>
                         </div>
 
                         <div>
@@ -128,7 +128,7 @@ const goBack = () => {
                                 :class="{ 'border-red-500': form.errors.document_number }" placeholder="12345678" />
                             <span v-if="form.errors.document_number" class="text-red-500 text-sm">{{
                                 form.errors.document_number
-                                }}</span>
+                            }}</span>
                         </div>
 
                         <!-- ✅ Género - USAR SELECT NATIVO PARA EVITAR PROBLEMAS -->
@@ -156,7 +156,7 @@ const goBack = () => {
                                 class="dark:shadow-xs-light block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500 disabled:opacity-50 disabled:cursor-not-allowed disabled:bg-gray-200 dark:disabled:bg-gray-600"
                                 :class="{ 'border-red-500': form.errors.first_name }" placeholder="Juan Carlos" />
                             <span v-if="form.errors.first_name" class="text-red-500 text-sm">{{ form.errors.first_name
-                                }}</span>
+                            }}</span>
                         </div>
 
                         <div>
@@ -232,7 +232,7 @@ const goBack = () => {
                                 class="dark:shadow-xs-light block w-full rounded-lg border border-gray-300 bg-gray-50 p-2.5 text-sm text-gray-900 shadow-xs focus:border-blue-500 focus:ring-blue-500 dark:border-gray-600 dark:bg-gray-700 dark:text-white dark:placeholder-gray-400 dark:focus:border-blue-500 dark:focus:ring-blue-500"
                                 :class="{ 'border-red-500': form.errors.password }" placeholder="Mínimo 8 caracteres" />
                             <span v-if="form.errors.password" class="text-red-500 text-sm">{{ form.errors.password
-                            }}</span>
+                                }}</span>
                         </div>
 
                         <div>

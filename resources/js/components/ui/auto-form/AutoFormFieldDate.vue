@@ -3,11 +3,11 @@ import type { FieldProps } from "./interface"
 import { DateFormatter, getLocalTimeZone } from "@internationalized/date"
 import { CalendarIcon } from "lucide-vue-next"
 import { cn } from "@/lib/utils"
-import { Button } from "@/registry/default/ui/button"
-import { Calendar } from "@/registry/default/ui/calendar"
+import { Button } from "@/components/ui/button"
+import { Calendar } from "@/components/ui/calendar"
 
-import { FormControl, FormDescription, FormField, FormItem, FormMessage } from "@/registry/default/ui/form"
-import { Popover, PopoverContent, PopoverTrigger } from "@/registry/default/ui/popover"
+import { FormControl, FormDescription, FormField, FormItem, FormMessage } from "@/components/ui/form"
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import AutoFormLabel from "./AutoFormLabel.vue"
 import { beautifyObjectName, maybeBooleanishToBoolean } from "./utils"
 
@@ -29,15 +29,13 @@ const df = new DateFormatter("en-US", {
           <div>
             <Popover>
               <PopoverTrigger as-child :disabled="maybeBooleanishToBoolean(config?.inputProps?.disabled) ?? disabled">
-                <Button
-                  variant="outline"
-                  :class="cn(
-                    'w-full justify-start text-left font-normal',
-                    !slotProps.componentField.modelValue && 'text-muted-foreground',
-                  )"
-                >
+                <Button variant="outline" :class="cn(
+                  'w-full justify-start text-left font-normal',
+                  !slotProps.componentField.modelValue && 'text-muted-foreground',
+                )">
                   <CalendarIcon class="mr-2 h-4 w-4" :size="16" />
-                  {{ slotProps.componentField.modelValue ? df.format(slotProps.componentField.modelValue.toDate(getLocalTimeZone())) : "Pick a date" }}
+                  {{ slotProps.componentField.modelValue ?
+                    df.format(slotProps.componentField.modelValue.toDate(getLocalTimeZone())) : "Pick a date" }}
                 </Button>
               </PopoverTrigger>
               <PopoverContent class="w-auto p-0">

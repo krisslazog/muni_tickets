@@ -5,7 +5,7 @@ import type { Config, ConfigItem, Dependency, Shape } from "./interface"
 import type { ZodObjectOrWrapped } from "./utils"
 import { toTypedSchema } from "@vee-validate/zod"
 import { computed, toRefs } from "vue"
-import { Form } from "@/registry/default/ui/form"
+import { Form } from "@/components/ui/form"
 import AutoFormField from "./AutoFormField.vue"
 import { provideDependencies } from "./dependencies"
 import { getBaseSchema, getBaseType, getDefaultValueInZodStack, getObjectFormSchema } from "./utils"
@@ -80,23 +80,13 @@ const formComponentProps = computed(() => {
 </script>
 
 <template>
-  <component
-    :is="formComponent"
-    v-bind="formComponentProps"
-  >
+  <component :is="formComponent" v-bind="formComponentProps">
     <slot name="customAutoForm" :fields="fields">
       <template v-for="(shape, key) of shapes" :key="key">
-        <slot
-          :shape="shape"
-          :name="key.toString() as keyof z.infer<T>"
-          :field-name="key.toString()"
-          :config="fieldConfig?.[key as keyof typeof fieldConfig] as ConfigItem"
-        >
-          <AutoFormField
-            :config="fieldConfig?.[key as keyof typeof fieldConfig] as ConfigItem"
-            :field-name="key.toString()"
-            :shape="shape"
-          />
+        <slot :shape="shape" :name="key.toString() as keyof z.infer<T>" :field-name="key.toString()"
+          :config="fieldConfig?.[key as keyof typeof fieldConfig] as ConfigItem">
+          <AutoFormField :config="fieldConfig?.[key as keyof typeof fieldConfig] as ConfigItem"
+            :field-name="key.toString()" :shape="shape" />
         </slot>
       </template>
     </slot>

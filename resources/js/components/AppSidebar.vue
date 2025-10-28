@@ -89,6 +89,18 @@ const data = {
                     title: 'Áreas',
                     url: route('admin.areas.index'),
                 },
+                {
+                    title: 'Usuarios',
+                    url: route('admin.users.index'),
+                },
+                {
+                    title: 'Roles',
+                    url: route('admin.roles.index'),
+                },
+                {
+                    title: 'Permisos',
+                    url: route('admin.permissions.index'),
+                },
             ],
         },
     ],
@@ -132,7 +144,7 @@ const footerNavItems: NavItem[] = [
                 <SidebarMenuItem>
                     <SidebarMenuButton size="lg" as-child>
                         <Link href="/">
-                            <AppLogo />
+                        <AppLogo />
                         </Link>
                     </SidebarMenuButton>
                 </SidebarMenuItem>
