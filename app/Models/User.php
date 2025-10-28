@@ -27,7 +27,9 @@ class User extends Authenticatable implements Auditable
         'name',
         'email',
         'password',
+        'is_active',
         'area_id',
+        'person_id',
     ];
 
     protected $hidden = [
@@ -48,7 +50,7 @@ class User extends Authenticatable implements Auditable
      * Relación con Person
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
-    
+
     public function person()
     {
         return $this->hasOne(Person::class, 'user_id');

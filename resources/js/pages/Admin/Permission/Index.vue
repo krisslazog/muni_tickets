@@ -8,17 +8,21 @@ import {
     TableRow,
 } from '@/components/ui/table';
 import {
-    Pagination,
-    PaginationContent,
-    PaginationEllipsis,
-    PaginationItem,
-    PaginationNext,
-    PaginationPrevious,
-} from '@/components/ui/pagination'
+    Select,
+    SelectContent,
+    SelectGroup,
+    SelectItem,
+    SelectLabel,
+    SelectTrigger,
+    SelectValue,
+} from "@/components/ui/select"
+import PaginationComponent from '@/components/ui-custom/pagination/PaginationComponent.vue';
+
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, router } from '@inertiajs/vue3';
 import { CirclePlus, SquarePen } from 'lucide-vue-next';
+import { ref } from 'vue';
 
 // 1. Definir las props que recibimos desde el controlador sin interfaz.
 const props = defineProps<{
@@ -29,22 +33,54 @@ const props = defineProps<{
         per_page: number;
         total: number;
         links: { url: string | null; label: string; page: number; active: boolean }[];
+        prev_page_url: string | null;
+        next_page_url: string | null;
+        from: number;
+        to: number;
     };
+    groups: any[];
     flash: {
         success?: string;
         error?: string;
     };
+    filters: {
+        search?: string;
+        group?: string;
+    };
 }>();
 
-const goToPage = (url: string | null) => {
+const goToPage = (url?: string | null) => {
     if (url) {
-        router.visit(url, {
-            preserveState: true,
-            preserveScroll: true,
-        });
+        router.visit(url);
     }
 };
 
+
+const form = ref({
+    search: props.filters.search || '',
+    group: props.filters.group || '',
+});
+
+// Search functionality
+let searchTimeout: number | null = null;
+const debounceSearch = () => {
+    if (searchTimeout) clearTimeout(searchTimeout);
+    searchTimeout = setTimeout(() => {
+        search();
+    }, 500);
+};
+const search = () => {
+    const params = { ...form.value };
+    if (params.group === '_all') params.group = '';
+    router.get(route('admin.permissions.index'), params, {
+        preserveState: true,
+        preserveScroll: true,
+    });
+};
+const clearFilters = () => {
+    form.value = { search: '', group: '' };
+    router.get(route('admin.permissions.index'));
+};
 // 2. Crear permiso
 const newPermission = () => {
     router.visit(route('admin.permissions.create'));
@@ -96,10 +132,38 @@ console.log(props.permissions)
                     <div>
                         <span class="font-medium">{{
                             props.flash.success
-                        }}</span>
+                            }}</span>
                     </div>
                 </div>
                 <!--fin mensaje flash-->
+                <div class="mb-4 grid w-full grid-cols-1 gap-3 md:grid-cols-3">
+                    <div>
+                        <input v-model="form.search" type="text" placeholder="Buscar por descripción o nombre"
+                            class="block w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500"
+                            @input="debounceSearch" />
+                    </div>
+                    <div>
+                        <Select v-model="form.group"
+                            class="block w-full h-10 rounded-md border border-gray-300 px-3 py-2 text-sm"
+                            @update:model-value="debounceSearch">
+                            <SelectTrigger>
+                                <SelectValue placeholder="Todos los grupos" />
+                            </SelectTrigger>
+                            <SelectContent>
+                                <SelectGroup>
+                                    <SelectLabel>Grupos</SelectLabel>
+                                    <SelectItem value="_all">Todos</SelectItem>
+                                    <SelectItem v-for="group in groups" :key="group" :value="group">
+                                        {{ group }}
+                                    </SelectItem>
+                                </SelectGroup>
+                            </SelectContent>
+                        </Select>
+                    </div>
+                    <div>
+                        <Button @click="clearFilters" class="w-full h-10">Limpiar</Button>
+                    </div>
+                </div>
                 <!-- 6. Botón de Nuevo Permiso -->
                 <div class="mb-4 flex justify-end">
                     <Button class="bg-green-600 text-white hover:bg-green-500" @click="newPermission">
@@ -108,12 +172,14 @@ console.log(props.permissions)
                     </Button>
                 </div>
             </div>
+
             <Table hover bordered responsive>
                 <TableHead sticky>
                     <TableRow>
                         <TableCell header>ID</TableCell>
                         <TableCell header>Nombre</TableCell>
                         <TableCell header>Descripción</TableCell>
+                        <TableCell header>Grupo</TableCell>
                         <TableCell header>Estado</TableCell>
                         <TableCell class="text-center">Acciones</TableCell>
                     </TableRow>
@@ -123,8 +189,9 @@ console.log(props.permissions)
                         <TableCell>{{ permission.id }}</TableCell>
                         <TableCell class="font-medium">{{
                             permission.name
-                        }}</TableCell>
+                            }}</TableCell>
                         <TableCell>{{ permission.description }}</TableCell>
+                        <TableCell>{{ permission.group }}</TableCell>
                         <TableCell>
                             <span class="rounded px-2 py-1 text-xs font-medium" :class="permission.status
                                 ? 'bg-green-100 text-green-800'
@@ -143,21 +210,9 @@ console.log(props.permissions)
                     </TableRow>
                 </TableBody>
             </Table>
-            <Pagination v-slot="{ page }" :items-per-page="10" :total="30" :default-page="2">
-                <PaginationContent v-slot="{ items }">
-                    <PaginationPrevious />
-
-                    <template v-for="(item, index) in props.permissions.links" :key="index">
-                        <PaginationItem :value="item.page" :is-active="item.active" @click="goToPage(item.url)">
-                            {{ item.label }}
-                        </PaginationItem>
-                    </template>
-
-                    <PaginationEllipsis :index="4" />
-
-                    <PaginationNext />
-                </PaginationContent>
-            </Pagination>
+            <PaginationComponent :links="props.permissions.links" :prevPageUrl="props.permissions.prev_page_url"
+                :nextPageUrl="props.permissions.next_page_url" :itemsPerPage="props.permissions.per_page"
+                :totalItems="props.permissions.total" @change-page="goToPage" />
         </div>
     </AppLayout>
 </template>

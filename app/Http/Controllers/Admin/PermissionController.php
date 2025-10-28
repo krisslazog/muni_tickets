@@ -12,10 +12,37 @@ class PermissionController extends Controller
     // Mostrar listado de permisos
     public function index(Request $request)
     {
-        $permissions = Permission::paginate(10);
+        $search = $request->get('search', '');
+        $group = $request->get('group', '');
+        $perPage = (int) $request->get('per_page', 10);
+
+        // Construir query aplicando filtros
+        $query = Permission::query();
+
+        if (!empty($search)) {
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('description', 'like', "%{$search}%");
+            });
+        }
+
+        if (!empty($group)) {
+            $query->where('group', $group);
+        }
+
+        $permissions = $query->paginate($perPage)->appends($request->only(['search', 'group', 'per_page']));
+
+        // Obtener lista de grupos únicos (no nulos) para el selector
+        $groups = Permission::query()
+            ->whereNotNull('group')
+            ->pluck('group')
+            ->unique()
+            ->values();
 
         return Inertia::render('Admin/Permission/Index', [
             'permissions' => $permissions,
+            'filters' => $request->only(['search', 'group']),
+            'groups' => $groups,
         ]);
     }
 
