@@ -7,7 +7,7 @@ import { defineProps, ref } from 'vue';
 
 // Definir las props que recibimos desde el controlador
 const props = defineProps<{
-    category: {
+    issue: {
         type: Object;
         id: any;
         name: string;
@@ -18,61 +18,63 @@ const props = defineProps<{
         type: Object;
         name: string;
         description: string;
-        // default: () => ({})
     };
 }>();
 
 // Evitar múltiples envíos y deshabilitar el botón
 const submitdisabled = ref(false);
 
-//Volver reactivo el formulario
+// Volver reactivo el formulario: Usamos props.issue
 const form = useForm({
-    name: props.category.name || '',
-    description: props.category.description || '',
-    status: props.category.status ?? true,
+    name: props.issue.name || '',
+    description: props.issue.description || '',
+    status: props.issue.status ?? true,
 });
 
-//breadcrums
-
+// breadcrums
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Categorias', href: route('tickets.category.index') },
+    // Apunta a la lista de Incidencias
+    { title: 'Incidencias', href: route('tickets.issues.index') },
     {
+        // Apunta a la edición de Incidencia
         title: 'Editar',
-        href: route('tickets.category.edit', props.category.id),
+        href: route('tickets.issues.edit', props.issue.id),
     },
 ];
 
-//Crear nueva
+// Función para actualizar (mantiene la lógica y la ruta PUT)
 function submitForm() {
     submitdisabled.value = true;
-    form.put(route('tickets.category.update', props.category.id), {
+    //Apunta al update de issues, usando el ID
+    form.put(route('tickets.issues.update', props.issue.id), {
         onSuccess: () => {
-            form.reset(); // Limpia el formulario
-            console.log('Actualizada correctamente');
+            // No reseteamos el formulario al editar
+            console.log('Incidencia actualizada correctamente'); // Texto cambiado
         },
         onError: (errors) => {
             console.log('Errores de validación:', errors);
+        },
+        onFinish: () => {
+            submitdisabled.value = false;
         },
     });
 }
 </script>
 
 <template>
-    <Head title="Editar Categoría" />
-
+    <Head title="Editar Incidencia" />
     <AppLayout :breadcrumbs="breadcrumbs">
         <div
             class="mx-auto mt-6 w-full max-w-full rounded-lg border bg-card p-6 text-card-foreground shadow-sm sm:max-w-xl md:max-w-2xl lg:max-w-4xl"
         >
             <div class="mb-6">
-                <h1 class="text-2xl font-bold">Editar Categoría</h1>
+                <h1 class="text-2xl font-bold">Editar Incidencia</h1>
                 <p class="mt-1 text-sm text-muted-foreground">
-                    Modifica los datos de la categoría.
+                    Modifica los datos de la incidencia.
                 </p>
             </div>
 
             <form @submit.prevent="submitForm" class="space-y-6">
-                <!-- Nombre -->
                 <div>
                     <label
                         for="name"
@@ -88,7 +90,7 @@ function submitForm() {
                             'border-destructive focus-visible:ring-destructive':
                                 props.errors.name,
                         }"
-                        placeholder="Nombre de la categoría"
+                        placeholder="Nombre de la incidencia"
                     />
                     <p
                         v-if="props.errors.name"
@@ -98,7 +100,6 @@ function submitForm() {
                     </p>
                 </div>
 
-                <!-- Descripción -->
                 <div>
                     <label
                         for="description"
@@ -114,7 +115,7 @@ function submitForm() {
                             'border-destructive focus-visible:ring-destructive':
                                 props.errors.description,
                         }"
-                        placeholder="Descripción de la categoría"
+                        placeholder="Descripción de la incidencia"
                     />
                     <p
                         v-if="props.errors.description"
@@ -124,7 +125,6 @@ function submitForm() {
                     </p>
                 </div>
 
-                <!-- Checkbox Estado -->
                 <div class="flex items-center space-x-2">
                     <input
                         type="checkbox"
@@ -140,7 +140,6 @@ function submitForm() {
                     </label>
                 </div>
 
-                <!-- Botón Guardar al final -->
                 <div class="flex justify-end border-t border-border pt-6">
                     <Button
                         type="submit"
