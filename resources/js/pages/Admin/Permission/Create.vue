@@ -27,20 +27,20 @@ const form = useForm({
 
 // breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Roles', href: route('admin.roles.index') },
-    { title: 'Crear', href: route('admin.roles.create') },
+    { title: 'Permisos', href: route('admin.permissions.index') },
+    { title: 'Crear', href: route('admin.permissions.create') },
 ];
 
 const cancel = () => {
-    router.visit(route('admin.roles.index'));
+    router.visit(route('admin.permissions.index'));
 };
 // Crear nuevo rol
 function submitForm() {
     submitdisabled.value = true;
-    form.post(route('admin.roles.store'), {
+    form.post(route('admin.permissions.store'), {
         onSuccess: () => {
             form.reset(); // Limpia el formulario
-            console.log('Rol creado correctamente');
+            console.log('Permiso creado correctamente');
         },
         onError: (errors) => {
             console.log('Errores de validación:', errors);

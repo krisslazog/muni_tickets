@@ -18,7 +18,9 @@ Route::get('dashboard', function () {
 
 
 // Grupo de rutas para el módulo de tickets
-Route::prefix('tickets')->name('tickets.')->middleware(['auth', 'verified','role:invitado'])->group(function () {
+Route::prefix('tickets')->name('tickets.')
+//->middleware(['auth', 'verified','role:invitado'])
+->group(function () {
 
 // Rutas para la gestión de Categorias
 
