@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Tickets;
 
 use App\Http\Controllers\Controller;
+use App\Models\User;
 use App\Models\TktTicket;
 use App\Models\TktCategory;
 use App\Models\TktPriority;
@@ -17,6 +18,7 @@ use Illuminate\Support\Facades\Route;
 
 class TicketsController extends Controller
 {
+
     /**
      * Muestra la tabla con la lista de todos los tickets.  
      */
@@ -42,11 +44,14 @@ class TicketsController extends Controller
      */
     public function create()
     {
+        $users = User::with('person')->get();
         return Inertia::render('Tickets/Tickets/Create', [
+            'usuario' => Auth::user(),
             'categories' => TktCategory::all(),
             'priorities' => TktPriority::all(),
             'areas' => Area::all(['id', 'name']),
             'issues' => TktIssue::all(['id','name']),
+            'users' => $users
         ]);
     }
 
@@ -57,6 +62,7 @@ class TicketsController extends Controller
     {
         // 1. Validación de los datos de entrada
         $validatedData = $request->validate([
+            'user_id'=>'required|integer:user,id',
             'issue_id'      => 'required|integer|exists:tkt_issues,id',
             'description'   => 'required|string',
             'category_id'   => 'required|integer|exists:tkt_categories,id',
@@ -83,14 +89,14 @@ class TicketsController extends Controller
             'area_id'       => $validatedData['area_id'],
             'status_id'     => $initialStatus->id,
             'issue_id'      => $validatedData['issue_id'],
-            'requester_id' => Auth::id(),
-            'assignee_id'   => 1,      // CORRECTO: Sin asignar inicialmente
+            'requester_id' => $validatedData['user_id'],
+            'assignee_id'   => null,      // CORRECTO: Sin asignar inicialmente
         ]);
 
         // 4. Guardar adjuntos (si existen) de forma más limpia
         if ($request->hasFile('attachments')) {
             $ticket->addMultipleMediaFromRequest(['attachments'])
-                   ->each(fn ($fileAdder) => $fileAdder->toMediaCollection('attachments'));
+                   ->each(fn ($fileAdder) => $fileAdder->toMediaCollection('tkt_img_attachments'));
         }
         
         // 5. Redirección con mensaje de éxito

@@ -53,7 +53,7 @@ class User extends Authenticatable implements Auditable
 
     public function person()
     {
-        return $this->hasOne(Person::class, 'user_id');
+        return $this->belongsTo(Person::class, 'person_id');
     }
     public function area()
     {
