@@ -20,6 +20,7 @@ class DatabaseSeeder extends Seeder
             TktPrioritySeeder::class,
             TktCategorySeeder::class,
             TktStatusSeeder::class,
+            TktIssueSeeder::class,
             AreaSeeder::class,
         ]);
     }

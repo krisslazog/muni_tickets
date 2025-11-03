@@ -7,67 +7,68 @@ import { defineProps, ref } from 'vue';
 
 // Definir las props que recibimos desde el controlador
 const props = defineProps<{
-    category: {
+    issue?: {
         type: Object;
-        id: any;
         name: string;
         description: string;
         status: boolean;
     };
+    // Estructura de errores
     errors: {
         type: Object;
         name: string;
         description: string;
-        // default: () => ({})
+        //  default: () => ({})
     };
 }>();
 
 // Evitar múltiples envíos y deshabilitar el botón
 const submitdisabled = ref(false);
 
-//Volver reactivo el formulario
+// Volver reactivo el formulario
+// Usamos props.issue para el estado inicial
 const form = useForm({
-    name: props.category.name || '',
-    description: props.category.description || '',
-    status: props.category.status ?? true,
+    name: props.issue?.name || '',
+    description: props.issue?.description || '',
+    status: props.issue?.status ?? true,
 });
 
-//breadcrums
-
+// breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Categorias', href: route('tickets.category.index') },
-    {
-        title: 'Editar',
-        href: route('tickets.category.edit', props.category.id),
-    },
+    { title: 'Incidencias', href: route('tickets.issues.index') },
+    { title: 'Crear', href: route('tickets.issues.create') },
 ];
 
-//Crear nueva
+// Crear nueva Incidencia
 function submitForm() {
     submitdisabled.value = true;
-    form.put(route('tickets.category.update', props.category.id), {
+    // La ruta de envío debe ser a la que creaste para Incidencias
+    form.post(route('tickets.issues.store'), {
         onSuccess: () => {
             form.reset(); // Limpia el formulario
-            console.log('Actualizada correctamente');
+            console.log('Incidencia creada correctamente');
         },
         onError: (errors) => {
             console.log('Errores de validación:', errors);
         },
+        onFinish: () => {
+            submitdisabled.value = false;
+        },
     });
 }
 </script>
-
 <template>
-    <Head title="Editar Categoría" />
+    <Head title="Crear incidencia" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div
             class="mx-auto mt-6 w-full max-w-full rounded-lg border bg-card p-6 text-card-foreground shadow-sm sm:max-w-xl md:max-w-2xl lg:max-w-4xl"
         >
             <div class="mb-6">
-                <h1 class="text-2xl font-bold">Editar Categoría</h1>
+                <h1 class="text-2xl font-bold">Crear Nueva Incidencia</h1>
                 <p class="mt-1 text-sm text-muted-foreground">
-                    Modifica los datos de la categoría.
+                    Completa el formulario para agregar una nueva incidencia de
+                    ticket.
                 </p>
             </div>
 
@@ -88,7 +89,7 @@ function submitForm() {
                             'border-destructive focus-visible:ring-destructive':
                                 props.errors.name,
                         }"
-                        placeholder="Nombre de la categoría"
+                        placeholder="Nombre de la incidencia"
                     />
                     <p
                         v-if="props.errors.name"
@@ -114,7 +115,7 @@ function submitForm() {
                             'border-destructive focus-visible:ring-destructive':
                                 props.errors.description,
                         }"
-                        placeholder="Descripción de la categoría"
+                        placeholder="Descripción de la incidencia"
                     />
                     <p
                         v-if="props.errors.description"
@@ -146,7 +147,7 @@ function submitForm() {
                         type="submit"
                         :disabled="submitdisabled"
                         class="bg-green-600 text-white hover:bg-green-500"
-                        >Actualizar</Button
+                        >Guardar</Button
                     >
                 </div>
             </form>

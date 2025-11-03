@@ -74,6 +74,10 @@ const data = {
                     url: route('tickets.tickets.index'),
                 },
                 {
+                    title: 'Incidencias',
+                    url: route('tickets.issues.index'),
+                },
+                {
                     title: 'Nuevo Ticket',
                     url: route('tickets.tickets.create'),
                 },

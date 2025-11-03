@@ -4,6 +4,7 @@ use App\Http\Controllers\Tickets\CategoryController;
 use App\Http\Controllers\Tickets\PriorityController;
 use App\Http\Controllers\Tickets\StatusController;
 use App\Http\Controllers\Tickets\TicketsController;
+use App\Http\Controllers\Tickets\IssueController;
 use Illuminate\Support\Facades\Route;
 
 use Inertia\Inertia;
@@ -104,6 +105,26 @@ Route::prefix('tickets')->name('tickets.')
         //Eliminar Ticket
         Route::delete('tickets/{id}', [TicketsController::class, 'destroy'])
         ->name('tickets.destroy');
+
+//Nueva incidencia
+        // Listar todas las incidencias
+        Route::get('issues', [IssueController::class, 'index'])
+        ->name('issues.index');
+        // Formulario para crear una nueva incidencia
+        Route::get('issues/create', [IssueController::class, 'create'])
+        ->name('issues.create');
+        // Guardar una nueva incidencia
+        Route::post('issues', [IssueController::class, 'store'])
+        ->name('issues.store');
+        // Formulario para editar una incidencia existente
+        Route::get('issues/{id}/edit', [IssueController::class, 'edit'])
+        ->name('issues.edit');
+        // Actualizar una incidencia existente
+        Route::put('issues/{id}', [IssueController::class, 'update'])
+        ->name('issues.update');
+        //Eliminar Incidencia
+        Route::delete('issues/{id}', [IssueController::class, 'destroy'])
+        ->name('issues.destroy');
 });
 
 require __DIR__.'/admin.php';
