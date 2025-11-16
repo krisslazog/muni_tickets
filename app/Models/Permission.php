@@ -25,4 +25,17 @@ class Permission extends SpatiePermission
     {
         return $query->where('group', $group);
     }
+
+    /**
+     * Sobrescribir el scope base para incluir solo permisos activos.
+     */
+    protected static function boot()
+    {
+        parent::boot();
+
+        // Filtrar automáticamente solo permisos activos en todas las consultas
+        static::addGlobalScope('active', function ($query) {
+            $query->where('status', true);
+        });
+    }
 }

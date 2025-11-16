@@ -12,10 +12,15 @@ class Role extends SpatieRole
     ];
 
     /**
-     * Scope para filtrar roles activos.
+     * Sobrescribir el scope base para incluir solo roles activos.
      */
-    public function scopeActive($query)
+    protected static function boot()
     {
-        return $query->where('status', true);
+        parent::boot();
+
+        // Filtrar automáticamente solo roles activos en todas las consultas
+        static::addGlobalScope('active', function ($query) {
+            $query->where('status', true);
+        });
     }
 }

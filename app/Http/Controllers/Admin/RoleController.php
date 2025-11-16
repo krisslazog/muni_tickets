@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use App\Http\Controllers\Controller;
 use App\Models\Role;
+use App\Models\Permission;
 use Illuminate\Http\Request;
 use Inertia\Inertia;
 
@@ -22,24 +23,43 @@ class RoleController extends Controller
     // Mostrar formulario para crear un rol
     public function create()
     {
-        return Inertia::render('Admin/Role/Create');
+        $permissions = Permission::withoutGlobalScope('active')
+            ->select('id', 'name', 'description', 'group')
+            ->orderBy('group')
+            ->orderBy('name')
+            ->get();
+
+        return Inertia::render('Admin/Role/Create', [
+            'permissions' => $permissions,
+        ]);
     }
 
     // Crear nuevo rol
     public function store(Request $request)
     {
         // Validar los datos que vienen del formulario
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'required|string',
-            'status' => 'boolean',
-        ]);
-        // Crear el área
-        Area::create([
-            'name' => $request->name,
-            'description' => $request->description,
-            'status' => $request->status ?? true,
-        ]);
+    $validated = $request->validate([
+        'name' => 'required|string|max:255|unique:roles',
+        'description' => 'nullable|string',
+        'status' => 'boolean',
+        'permissions' => 'nullable|array',
+        'permissions.*' => 'exists:permissions,id',
+    ]);
+
+    // Crear el rol
+    $role = Role::create([
+        'name' => $request->name,
+        'description' => $request->description,
+        'status' => $request->status ?? true,
+    ]);
+
+    // Asignar permisos al rol
+    if (!empty($validated['permissions'])) {
+        $permissions = Permission::withoutGlobalScope('active')
+            ->whereIn('id', $validated['permissions'])
+            ->pluck('name');
+        $role->givePermissionTo($permissions);
+    }
         // Redirigir al listado de áreas después de crearla
         return redirect()->route('admin.roles.index')
                          ->with('success', 'Rol creado correctamente.');
@@ -50,32 +70,51 @@ class RoleController extends Controller
     {
         // Buscar rol por id
         $role = Role::findOrFail($id);
-        // Retornar vista con el rol
+
+        $permissions = Permission::withoutGlobalScope('active')
+            ->select('id', 'name', 'description', 'group')
+            ->orderBy('group')
+            ->orderBy('name')
+            ->get();
+        // Obtener IDs de permisos asignados al rol
+        $rolePermissions = $role->permissions->pluck('id')->toArray();
+
         return Inertia::render('Admin/Role/Edit', [
-            'role' => $role,
+            'role' => array_merge($role->toArray(), ['permissions' => $rolePermissions]),
+            'permissions' => $permissions,
         ]);
     }
 
     // Actualizar rol
     public function update(Request $request, $id)
     {
-        // Validar los datos que vienen del formulario
-        $request->validate([
-            'name' => 'required|string|max:255',
-            'description' => 'nullable|string',
-            'status' => 'boolean',
-        ]);
-        // Buscar rol por id
-        $role = Role::findOrFail($id);
+        $role = Role::withoutGlobalScope('active')->findOrFail($id);
 
-        // Actualizar rol
-        $role->update([
-            'name' => $request->name,
-            'description' => $request->description,
-            'status' => $request->status ?? true,
-        ]);
-        // Redirigir al listado de roles después de actualizar
-        return redirect()->route('admin.roles.index')
-                         ->with('success', 'Rol actualizado correctamente.');
+    $validated = $request->validate([
+        'name' => 'required|string|max:255|unique:roles,name,' . $id,
+        'description' => 'nullable|string',
+        'status' => 'boolean',
+        'permissions' => 'nullable|array',
+        'permissions.*' => 'exists:permissions,id',
+    ]);
+
+    $role->update([
+        'name' => $validated['name'],
+        'description' => $validated['description'] ?? null,
+        'status' => $validated['status'] ?? true,
+    ]);
+
+    // Sincronizar permisos (elimina los anteriores y asigna los nuevos)
+    if (isset($validated['permissions'])) {
+        $permissions = Permission::withoutGlobalScope('active')
+            ->whereIn('id', $validated['permissions'])
+            ->pluck('name');
+        $role->syncPermissions($permissions);
+    } else {
+        $role->syncPermissions([]); // Elimina todos los permisos si no se envía ninguno
+    }
+
+    return redirect()->route('admin.roles.index')
+        ->with('success', 'Rol actualizado exitosamente.');
     }
 }

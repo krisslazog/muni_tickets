@@ -3,22 +3,24 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm, router } from '@inertiajs/vue3';
-import { defineProps, ref } from 'vue';
+import { defineProps, ref, computed } from 'vue';
 
 // Definir las props que recibimos desde el controlador
 const props = defineProps<{
     role: {
-        type: Object;
-        id: any;
+        id: number;
         name: string;
         description: string;
         status: boolean;
+        permissions?: number[]; // IDs asignados al rol
     };
-    errors: {
-        type: Object;
+    permissions: {
+        id: number;
         name: string;
-        description: string;
-    };
+        description?: string;
+        group?: string;
+    }[];
+    errors?: Record<string, any>;
 }>();
 
 // Evitar múltiples envíos y deshabilitar el botón
@@ -29,6 +31,7 @@ const form = useForm({
     name: props.role.name || '',
     description: props.role.description || '',
     status: props.role.status ?? true,
+    permissions: props.role.permissions || [],
 });
 
 //breadcrums
@@ -55,6 +58,17 @@ function submitForm() {
         },
     });
 }
+
+// Agrupar permisos por su campo `group` para renderizado
+const groupedPermissions = computed(() => {
+    const map = new Map<string, any[]>();
+    (props.permissions || []).forEach((p: any) => {
+        const g = p.group ?? 'Sin grupo';
+        if (!map.has(g)) map.set(g, []);
+        map.get(g)!.push(p);
+    });
+    return Array.from(map.entries());
+});
 </script>
 
 <template>
@@ -111,6 +125,30 @@ function submitForm() {
                 </div>
 
                 <!-- Botón Guardar al final -->
+                <!-- Selector de permisos agrupados por 'group' -->
+                <div>
+                    <label class="mb-2 block text-sm font-medium">Permisos</label>
+                    <div class="space-y-2 max-h-80 overflow-y-auto border rounded-md p-4">
+                        <div v-for="([groupName, perms]) in groupedPermissions" :key="groupName" class="mb-3">
+                            <details class="rounded-md border bg-card p-3">
+                                <summary class="cursor-pointer list-none font-medium">
+                                    {{ groupName || 'Sin grupo' }}
+                                    <span class="ml-2 text-xs text-gray-500">({{ perms.length }})</span>
+                                </summary>
+                                <div class="mt-3 space-y-2">
+                                    <div v-for="permission in perms" :key="permission.id" class="flex items-center space-x-2">
+                                        <input type="checkbox" :id="`perm-${permission.id}`" :value="permission.id"
+                                            v-model="form.permissions" class="h-4 w-4 rounded border-gray-300" />
+                                        <label :for="`perm-${permission.id}`" class="text-sm">
+                                            <span class="font-medium">{{ permission.name }}</span>
+                                            <span class="ml-2 text-xs text-gray-500">{{ permission.description || '' }}</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </details>
+                        </div>
+                    </div>
+                </div>
                 <div class="flex justify-end space-x-4">
                     <Button type="button" class="bg-gray-600 text-white hover:bg-gray-500" @click="cancel">
                         Cancelar

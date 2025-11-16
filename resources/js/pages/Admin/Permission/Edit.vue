@@ -19,6 +19,7 @@ const props = defineProps<{
         type: Object;
         name: string;
         description: string;
+        group: string;
     };
 }>();
 
@@ -29,9 +30,9 @@ const submitdisabled = ref(false);
 const form = useForm({
     name: props.permission.name || '',
     description: props.permission.description || '',
+    group: props.permission.group || '',
     status: props.permission.status ?? true,
 });
-
 //breadcrums
 const breadcrumbs: BreadcrumbItem[] = [
     { title: 'Permisos', href: route('admin.permissions.index') },
@@ -98,6 +99,20 @@ function submitForm() {
                         }" placeholder="Describe el propósito del área" />
                     <p v-if="props.errors.description" class="mt-2 text-sm font-medium text-destructive">
                         {{ props.errors.description }}
+                    </p>
+                </div>
+
+                <!-- Grupo -->
+                <div>
+                    <label for="group" class="mb-2 block text-sm font-medium text-foreground">Grupo</label>
+                    <input type="text" id="group" v-model="form.group"
+                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:cursor-not-allowed disabled:opacity-50"
+                        :class="{
+                            'border-destructive focus-visible:ring-destructive':
+                                props.errors.group,
+                        }" placeholder="Ej: tickets, usuarios, etc." />
+                    <p v-if="props.errors.group" class="mt-2 text-sm font-medium text-destructive">
+                        {{ props.errors.group }}
                     </p>
                 </div>
 
