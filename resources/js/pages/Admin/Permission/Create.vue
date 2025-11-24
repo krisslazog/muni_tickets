@@ -3,13 +3,14 @@ import { Button } from '@/components/ui/button';
 import AppLayout from '@/layouts/AppLayout.vue';
 import { type BreadcrumbItem } from '@/types';
 import { Head, useForm, router } from '@inertiajs/vue3';
-import { defineProps, ref, } from 'vue';
+import { ref } from 'vue';
 
-// Definir las props que recibimos desde el controlador (corregido)
+// Definir las props que recibimos desde el controlador
 const props = defineProps<{
-    role?: {
+    permission?: {
         name?: string;
         description?: string;
+        group?: string;
         status?: boolean;
     };
     errors?: Record<string, any>;
@@ -20,13 +21,15 @@ const submitdisabled = ref<boolean>(false);
 
 // Volver reactivo el formulario
 const form = useForm({
-    name: props.role?.name || '',
-    description: props.role?.description || '',
-    status: props.role?.status ?? true,
+    name: props.permission?.name || '',
+    description: props.permission?.description || '',
+    group: props.permission?.group || '',
+    status: props.permission?.status ?? true,
 });
 
 // breadcrumbs
 const breadcrumbs: BreadcrumbItem[] = [
+    { title: 'Administración', href: '/admin' },
     { title: 'Permisos', href: route('admin.permissions.index') },
     { title: 'Crear', href: route('admin.permissions.create') },
 ];
@@ -34,7 +37,8 @@ const breadcrumbs: BreadcrumbItem[] = [
 const cancel = () => {
     router.visit(route('admin.permissions.index'));
 };
-// Crear nuevo rol
+
+// Crear nuevo permiso
 function submitForm() {
     submitdisabled.value = true;
     form.post(route('admin.permissions.store'), {
@@ -55,15 +59,15 @@ function submitForm() {
 
 <template>
 
-    <Head title="Crear rol" />
+    <Head title="Crear Permiso" />
 
     <AppLayout :breadcrumbs="breadcrumbs">
         <div
             class="mx-auto mt-6 w-full max-w-full rounded-lg border bg-card p-6 text-card-foreground shadow-sm sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
             <div class="mb-6">
-                <h1 class="text-2xl font-bold">Crear Nuevo Rol</h1>
+                <h1 class="text-2xl font-bold">Crear Nuevo Permiso</h1>
                 <p class="mt-1 text-sm text-muted-foreground">
-                    Completa el formulario para agregar un nuevo rol.
+                    Completa el formulario para agregar un nuevo permiso al sistema.
                 </p>
             </div>
 
@@ -74,9 +78,8 @@ function submitForm() {
                     <input type="text" id="name" v-model="form.name"
                         class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         :class="{
-                            'border-destructive focus-visible:ring-destructive':
-                                props.errors?.name,
-                        }" placeholder="Nombre del rol" />
+                            'border-destructive focus-visible:ring-destructive': props.errors?.name,
+                        }" placeholder="Nombre del permiso" />
                     <p v-if="props.errors?.name" class="mt-2 text-sm font-medium text-destructive">
                         {{ props.errors?.name }}
                     </p>
@@ -88,11 +91,24 @@ function submitForm() {
                     <input type="text" id="description" v-model="form.description"
                         class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
                         :class="{
-                            'border-destructive focus-visible:ring-destructive':
-                                props.errors?.description,
-                        }" placeholder="Descripción del rol" />
+                            'border-destructive focus-visible:ring-destructive': props.errors?.description,
+                        }" placeholder="Descripción del permiso" />
                     <p v-if="props.errors?.description" class="mt-2 text-sm font-medium text-destructive">
                         {{ props.errors?.description }}
+                    </p>
+                </div>
+
+                <!-- Grupo -->
+                <div>
+                    <label for="group" class="mb-2 block text-sm font-medium text-foreground">Grupo</label>
+                    <input type="text" id="group" v-model="form.group"
+                        class="flex h-10 w-full rounded-md border border-input bg-background px-3 py-2 text-sm ring-offset-background file:border-0 file:bg-transparent file:text-sm file:font-medium placeholder:text-muted-foreground focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:cursor-not-allowed disabled:opacity-50"
+                        :class="{
+                            'border-destructive focus-visible:ring-destructive':
+                                props.errors?.group,
+                        }" placeholder="Grupo del permiso (ej: usuarios, roles, etc.)" />
+                    <p v-if="props.errors?.group" class="mt-2 text-sm font-medium text-destructive">
+                        {{ props.errors?.group }}
                     </p>
                 </div>
 

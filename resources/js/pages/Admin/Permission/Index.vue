@@ -166,7 +166,7 @@ console.log(props.permissions)
                 </div>
                 <!-- 6. Botón de Nuevo Permiso -->
                 <div class="mb-4 flex justify-end">
-                    <Button class="bg-green-600 text-white hover:bg-green-500" @click="newPermission">
+                    <Button type="button" class="bg-green-600 text-white hover:bg-green-500" @click="newPermission">
                         <CirclePlus class="mr-2 h-4 w-4" />
                         Nuevo Permiso
                     </Button>

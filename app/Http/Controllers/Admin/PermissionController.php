@@ -62,8 +62,8 @@ class PermissionController extends Controller
             'group' => 'required|string|max:255',
             'status' => 'boolean',
         ]);
-        // Crear el área
-        Area::create([
+        // Crear el permiso
+        Permission::create([
             'name' => $request->name,
             'description' => $request->description,
             'group' => $request->group,

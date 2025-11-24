@@ -25,8 +25,9 @@ const props = defineProps<{
 }>();
 
 const breadcrumbs: BreadcrumbItem[] = [
-    { title: 'Usuarios', href: '/admin/users' },
-    { title: 'Crear Usuario', href: '/admin/users/create' },
+    { title: 'Administración', href: '/admin' },
+    { title: 'Usuarios', href: route('admin.users.index') },
+    { title: 'Editar', href: '' },
 ];
 
 // Datos de entrada para la búsqueda
@@ -92,12 +93,15 @@ const goBack = () => {
 
     <Head title="Crear Usuario" />
     <AppLayout :breadcrumbs="breadcrumbs">
-        <div class="mx-auto w-full max-w-full px-4 py-6 sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
-            <!--fin mensaje flash-->
-            <!-- FORMULARIO PARA CREAR PERSONA -->
-            <div class="rounded-lg shadow p-6 mb-6">
-                <h2 class="text-lg font-semibold text-gray-900 dark:text-white mb-4">Crear Nueva Persona</h2>
+        <div class="mx-auto mt-6 w-full max-w-full rounded-lg border bg-card p-6 text-card-foreground shadow-sm sm:max-w-xl md:max-w-2xl lg:max-w-4xl">
+            <div class="mb-6">
+                <h1 class="text-2xl font-bold">Editar Usuario</h1>
+                <p class="mt-1 text-sm text-muted-foreground">
+                    Modifica los datos del usuario seleccionado.
+                </p>
+            </div>
 
+            <div>
                 <form @submit.prevent="createPerson" class="space-y-6">
                     <!-- ✅ Datos del documento - CORREGIR clases disabled -->
                     <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-4">

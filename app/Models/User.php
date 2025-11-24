@@ -47,6 +47,14 @@ class User extends Authenticatable implements Auditable
     }
 
     /**
+     * Verificar si el usuario está activo
+     */
+    public function isActive(): bool
+    {
+        return $this->is_active;
+    }
+
+    /**
      * Relación con Person
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */

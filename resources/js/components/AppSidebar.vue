@@ -87,8 +87,12 @@ const data = {
             title: 'Administración',
             url: '#',
             icon: Shield,
-            isActive: usePage().url.startsWith('/admin'),
+            isActive: usePage().url.startsWith('/admin') || usePage().url.startsWith('/person'),
             items: [
+                {
+                    title: 'Personas',
+                    url: route('admin.person.index'),
+                },
                 {
                     title: 'Áreas',
                     url: route('admin.areas.index'),

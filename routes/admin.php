@@ -4,7 +4,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\Admin\UserController;
 use App\Http\Controllers\Admin\AreaController;
-use App\Http\Controllers\Admin\PersonController as AdminPersonController;
+use App\Http\Controllers\Admin\PersonController;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -42,6 +42,7 @@ Route::middleware([
         Route::get('/{user}/edit', [UserController::class, 'edit'])->name('edit');
         Route::put('/{user}', [UserController::class, 'update'])->name('update');
         Route::delete('/{user}', [UserController::class, 'destroy'])->name('destroy');
+        Route::patch('/{user}/activate', [UserController::class, 'activate'])->name('activate');
 
         // Gestión de roles del usuario
         Route::post('/{user}/assign-role', [UserController::class, 'assignRole'])
@@ -115,6 +116,26 @@ Route::middleware([
         Route::get('/{area}/edit', [AreaController::class, 'edit'])->name('edit');
         Route::put('/{area}', [AreaController::class, 'update'])->name('update');
         Route::delete('/{area}', [AreaController::class, 'destroy'])->name('destroy');
+    });
+
+    // ========================================
+    // GESTIÓN DE PERSONAS
+    // ========================================
+    Route::prefix('person')->name('person.')->group(function () {
+        // Listar todas las personas
+        Route::get('/', [PersonController::class, 'index'])->name('index');
+        // Formulario para crear una nueva persona
+        Route::get('/create', [PersonController::class, 'create'])->name('create');
+        // Guardar una nueva persona
+        Route::post('/', [PersonController::class, 'store'])->name('store');
+        // Ver detalles de una persona específica
+        Route::get('/{person}', [PersonController::class, 'show'])->name('show');
+        // Formulario para editar una persona existente
+        Route::get('/{person}/edit', [PersonController::class, 'edit'])->name('edit');
+        // Actualizar una persona existente
+        Route::put('/{person}', [PersonController::class, 'update'])->name('update');
+        // Eliminar una persona
+        Route::delete('/{person}', [PersonController::class, 'destroy'])->name('destroy');
     });
 
     // ========================================

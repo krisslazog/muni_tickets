@@ -23,26 +23,14 @@ class UserController extends Controller
     public function index(Request $request)
     {
         $users = User::with(['person', 'roles'])
-            ->when($request->search, function ($query, $search) {
-                $query->search($search);
-            })
-            ->when($request->role, function ($query, $role) {
-                $query->whereHas('roles', function ($q) use ($role) {
-                    $q->where('name', $role);
-                });
-            })
-            ->when($request->dni, function ($query, $dni) {
-                $query->byDni($dni);
-            })
             ->orderBy('created_at', 'desc')
-            ->paginate(10)
-            ->withQueryString();
-            $roles = Role::all();
+            ->get();
+
+        $roles = Role::all();
 
         return Inertia::render('Admin/Users/Index', [
-            'users' => $users,
+            'users' => ['data' => $users],
             'roles' => $roles,
-            'filters' => $request->only(['search', 'role', 'dni'])
         ]);
     }
 
@@ -236,5 +224,39 @@ class UserController extends Controller
         $user->syncPermissions($request->input('permissions', []));
 
         return redirect()->route('admin.users.index')->with('success', 'Roles y permisos asignados correctamente.');
+    }
+
+    /**
+     * Remove the specified resource from storage (logical deletion).
+     */
+    public function destroy(string $id)
+    {
+        $user = User::findOrFail($id);
+        
+        // Verificar que no sea el usuario actual
+        if ($user->id === auth()->id()) {
+            return redirect()->route('admin.users.index')
+                ->with('error', 'No puedes desactivar tu propia cuenta.');
+        }
+
+        // Desactivar usuario (eliminación lógica)
+        $user->update(['is_active' => false]);
+
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Usuario desactivado correctamente.');
+    }
+
+    /**
+     * Activate the specified user.
+     */
+    public function activate(string $id)
+    {
+        $user = User::findOrFail($id);
+        
+        // Reactivar usuario
+        $user->update(['is_active' => true]);
+
+        return redirect()->route('admin.users.index')
+            ->with('success', 'Usuario reactivado correctamente.');
     }
 }
